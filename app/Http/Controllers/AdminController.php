@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\Approval;
+use Mail;
+use App\Mail\ApprovalRequest;
 
 class AdminController extends Controller
 {
@@ -25,27 +27,45 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $users = DB::table('users')
-            ->selectRaw('*, datediff(updated_at, created_at) as diff')
-            ->get();
+        $approvals = Approval::where('status', 0)->get();
 
-        // $users = Table('users')->select('updated_at'->diffInHours('created_at'))->get();
-        $to = Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 4:31:34');
-        $from = Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 3:30:34');
+        // // $users = Table('users')->select('updated_at'->diffInHours('created_at'))->get();
+        // $to = Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 4:31:34');
+        // $from = Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 3:30:34');
   
-        $diff_in_hours = $to->diffForHumans($from);
+        // $diff_in_hours = $to->diffForHumans($from);
                
-        echo $diff_in_hours;
+        // echo $diff_in_hours;
+        // dd($approvals);
 
-        // return view('admin.admin');
+        return view('dashboard', compact('approvals'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * // Update the approval status based on the request (approve/reject)
      */
-    public function create()
+    public function approve($id, Request $request)
     {
-        //
+        $mail_data = [
+            'title'=> 'Dear Sir/Madam,',
+            'body'=> ''
+        ];
+
+        $approval = Approval::where('id', $id)->first();
+        if($request->flag == 1){
+            //Approve
+            $mail_data['body'] = 'Your request for NOC server access has been approved.';
+            $approval->status = true;
+            $approval->save();  
+        }else{
+            //Reject
+            $mail_data['body'] = 'Your request for NOC server access has been rejected.';
+            $approval->status = false;
+            $approval->save();
+        }
+        $approval_token = $approval->token;
+        Mail::to('sonam.yeshi@bt.bt')->send(new ApprovalRequest($mail_data, $approval_token));
+        return redirect('dashboard');
     }
 
     /**

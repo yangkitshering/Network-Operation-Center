@@ -7,7 +7,7 @@
             <div class="wrap">
                 <div class="img" style="background-image: url('images/BT.png');"></div>
                 <!-- <img src="images/BT.png" alt="" width="350"> -->
-                <div class="index-title">DEMO</div>
+                <div class="index-title">NOC</div>
                 <div class=" login-wrap p-4 p-md-3 mt-3 mx-3">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
@@ -40,9 +40,8 @@
 
                         <div class="form-group">
                             <div style="text-align: center; font-size: 13px">
-                            <a href="{{ route('register') }}">{{ __('Register ?') }}</a>
-                            <button type="submit"
-                                class="btn btn-primary rounded submit px-3">Login</button>
+                                <a href="{{ route('register') }}">{{ __('Register ?') }}</a>
+                                <button type="submit" class="btn btn-primary rounded submit px-3">Login</button>
                             </div>
                         </div>
 
@@ -50,7 +49,7 @@
                             <div style="text-align: center; font-size: 13px">
                                 <a href="{{ route('password.request') }}">{{ __('Forgot Password') }}</a>
                             </div>
-                            
+
                         </div>
                     </form>
                 </div>

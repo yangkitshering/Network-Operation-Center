@@ -15,7 +15,7 @@ class Controller extends BaseController
     public function index()
     {
         if(! Auth::user()) {
-            return view('index');
+            return view('welcome');
         } else {
             return redirect(RouteServiceProvider::HOME);
         }

@@ -8,14 +8,21 @@
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
+                    <span class="pl-3 cd-headline">NOC</span>
                 </div>
+            </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+            <!-- Navigation Links -->
+            <div class="space-x-8 sm:-my-px sm:ml-12 sm:flex">
+                <x-nav-link :href="route('registration')" :active="request()->routeIs('registration')">
+                    {{ __('Request Register') }}
+                </x-nav-link>
+                <x-nav-link :href="route('pendingList')" :active="request()->routeIs('/pendingList')">
+                    {{ __('Pending Request') }}
+                </x-nav-link>
+                <x-nav-link :href="route('approvedList')" :active="request()->routeIs('/approvedList')">
+                    {{ __('Approved List') }}
+                </x-nav-link>
             </div>
 
             <!-- Settings Dropdown -->

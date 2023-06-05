@@ -12,20 +12,22 @@
           <!-- Slider -->
           <section class="cd-intro">
             <h1 class="wow fadeInUp animated cd-headline slide" data-wow-delay=".4s">
-              <span>Network Operation Center, BT</span><br>
+              <span>Network Operation Center (NOC)</span><br>
               <span class="cd-words-wrapper">
-                <b class="is-visible">Request</b>
-                <b>Approve</b>
-                <b>Enter</b>
+                <b class="is-visible">Register Your Request</b>
+                <b>Wait for Approval</b>
+                <b>Receive Confirmation</b>
               </span>
             </h1>
           </section> <!-- cd-intro -->
           <!-- /.slider -->
+          <br>
           <h2 class="wow fadeInUp animated" data-wow-delay=".6s">
-            NOC, Network Operation Center System
+            Submit your request approval for visiting NOC server access. Your admin/approval will receive your request.
+            After verification you will be notified back on your request.
           </h2>
           <a class="btn-lines dark light wow fadeInUp animated btn btn-default btn-green hvr-bounce-to-right"
-            data-wow-delay=".9s" href="https://themefisher.com/" target="_blank">Learn More</a>
+            data-wow-delay=".9s" href="https://www.bt.bt/" target="_blank">Learn More</a>
         </div>
       </div>
     </div>
@@ -43,27 +45,24 @@ About Section Start
       <div class="col-md-6 col-sm-6">
         <div class="block wow fadeInLeft" data-wow-delay=".3s" data-wow-duration="500ms">
           <h2>
-            ABOUT Blockchain
+            ABOUT US
           </h2>
           <p>
-            A blockchain is a type of distributed ledger technology (DLT) that consists of growing list of records,
-            called blocks, that are securely linked together using cryptography. Each block contains a
-            cryptographic hash of the previous block, a timestamp, and transaction data.
+            Bhutan Telecom Limited (BTL) is the leading provider of telecommunications and Internet services
+            in the Kingdom of Bhutan. Besides fixed line telephony, it provides GSM Mobile services
+            under its flagship brand B-Mobile, and Internet Services under the brand name of DrukNet.
+            It is the leading provider of both mobile telephony and Internet services in the country,
+            and the only fixed line telephony services provider in the country.
           </p>
           <p>
-            Blockchain transactions are irreversible in that, once they are
-            recorded, the data in any given block cannot be altered retroactively without altering all subsequent
-            blocks.
-          </p>
-          <p>
-            Source: <b>Wikipedia</b>
+            NOC
           </p>
         </div>
 
       </div>
       <div class="col-md-6 col-sm-6">
         <div class="block wow fadeInRight" data-wow-delay=".3s" data-wow-duration="500ms">
-          <img src="images/blockchain.png" alt="">
+          <img src="images/ABOUT-US.png" alt="">
         </div>
       </div>
     </div>
@@ -76,7 +75,7 @@ About Section Start
     ==================================================
   -->
 
-<section id="feature">
+{{-- <section id="feature">
   <div class="container">
     <div class="section-heading">
       <h1 class="title wow fadeInDown" data-wow-delay=".3s">Features</h1>
@@ -165,7 +164,7 @@ About Section Start
       </div>
     </div>
   </div>
-</section> <!-- /#feature -->
+</section> <!-- /#feature --> --}}
 
 <!-- FootNote -->
 <section id="call-to-action">
@@ -173,13 +172,12 @@ About Section Start
     <div class="row">
       <div class="col-md-12">
         <div class="block">
-          <h2 class="title wow fadeInDown" data-wow-delay=".3s" data-wow-duration="500ms">First Blockchain Application
-            in Bhutan</h1>
+          <h2 class="title wow fadeInDown" data-wow-delay=".3s" data-wow-duration="500ms">Network Operation Center</h1>
             <p class="wow fadeInDown" data-wow-delay=".5s" data-wow-duration="500ms">
-              The very first decentralized application in Bhutan.
+              Bhutan Telecom Limited
             </p>
-            <a href="contact.html" class="btn btn-default btn-contact wow fadeInDown" data-wow-delay=".7s"
-              data-wow-duration="500ms">Leave a Feedback</a>
+            <a href="{{ route('feedback') }}" class="btn btn-default btn-contact wow fadeInDown" data-wow-delay=".7s"
+              data-wow-duration="500ms">Leave us a Feedback</a>
         </div>
       </div>
     </div>

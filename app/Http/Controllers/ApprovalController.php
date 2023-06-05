@@ -7,6 +7,7 @@ use App\Models\Approval;
 
 class ApprovalController extends Controller
 {
+    // Render this page on clicking approval/reject link by admin user.
     public function process()
     {
         // $approval = Approval::where('token', $approvalToken)->first();
@@ -21,6 +22,6 @@ class ApprovalController extends Controller
         //     return "Thank you for your response. The approval has been ";
         // }
 
-        return redirect('/');
-}
+        return redirect('login');
+   }
 }

@@ -111,7 +111,7 @@ class ApiController extends Controller
 
             return response()->json([  
                 'success' => true,
-                'message' => 'Your Details has recorded.',
+                'message' => 'Your Details has been recorded.',
                 'entry' => $entry
             ]);
         }

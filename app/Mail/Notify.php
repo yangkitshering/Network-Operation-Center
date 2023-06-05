@@ -9,11 +9,10 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ApprovalRequest extends Mailable
+class Notify extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $mail_data, $approval_token;
+    public $mail_data;
 
     /**
      * Create a new message instance.
@@ -21,7 +20,6 @@ class ApprovalRequest extends Mailable
     public function __construct($mail_data)
     {
         $this->mail_data = $mail_data;
-        // $this->approval_token = $approval_token;
     }
 
     /**
@@ -30,7 +28,7 @@ class ApprovalRequest extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Approval Request for NOC Service',
+            subject: 'Request registration for NOC Service',
         );
     }
 
@@ -40,7 +38,7 @@ class ApprovalRequest extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.my_mail',
+            view: 'emails.notify',
         );
     }
 

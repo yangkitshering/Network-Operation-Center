@@ -7,7 +7,11 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Approval;
 use Mail;
-use App\Mail\ApprovalRequest;
+use App\Mail\Notify;
+use Illuminate\Support\Facades\Session;
+use App\Models\Registration;
+use Illuminate\Support\Facades\DB;
+use App\Models\RackList;
 
 class AdminController extends Controller
 {
@@ -23,26 +27,22 @@ class AdminController extends Controller
     }
     
     /**
-     * Display a listing of the resource.
+     * Renders dashboard page on successful login with request approval list
      */
     public function index()
     {
-        $approvals = Approval::where('status', 0)->get();
-
-        // // $users = Table('users')->select('updated_at'->diffInHours('created_at'))->get();
-        // $to = Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 4:31:34');
-        // $from = Carbon::createFromFormat('Y-m-d H:s:i', '2015-5-5 3:30:34');
-  
-        // $diff_in_hours = $to->diffForHumans($from);
-               
-        // echo $diff_in_hours;
-        // dd($approvals);
+        $approvals = DB::table('registrations')
+            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
+            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
+            ->where('registrations.status', '=', 'I')
+            ->get();
+        // $approvals = Registration::where('status', 'I')->get();
 
         return view('dashboard', compact('approvals'));
     }
 
     /**
-     * // Update the approval status based on the request (approve/reject)
+     * Admin Approve/Reject/view the request
      */
     public function approve($id, Request $request)
     {
@@ -51,45 +51,83 @@ class AdminController extends Controller
             'body'=> ''
         ];
 
-        $approval = Approval::where('id', $id)->first();
-        if($request->flag == 1){
-            //Approve
-            $mail_data['body'] = 'Your request for NOC server access has been approved.';
-            $approval->status = true;
-            $approval->save();  
+        
+        $approvals = DB::table('registrations')
+            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
+            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
+            ->where('registrations.id', '=', $id)
+            ->get()->first();
+
+        if($request->flag == 2){
+            //View
+            return view('pages.view', compact('approvals'));
+
+        }else if($request->flag == 1){
+           //Approve
+           $approval = Registration::where('id', $id)->first();
+           $mail_data['body'] = 'Your request for NOC server rack access has been approved.
+                                You may enter the server room';
+           $approval->status = 'A';
+           $approval->save();  
         }else{
             //Reject
-            $mail_data['body'] = 'Your request for NOC server access has been rejected.';
-            $approval->status = false;
-            $approval->save();
+            $approval = Registration::where('id', $id)->first();
+            $mail_data['body'] = 'Your request for NOC server rack access has been rejected.
+                                  Kindly request next time.';
+            $approval->status = 'R';
+            $approval->save(); 
         }
-        $approval_token = $approval->token;
-        Mail::to('sonam.yeshi@bt.bt')->send(new ApprovalRequest($mail_data, $approval_token));
+
+        $notify_email = $approval->email;
+        Mail::to($notify_email)->send(new Notify($mail_data));
         return redirect('dashboard');
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Renders admin request registration page.
      */
-    public function store(Request $request)
+    public function register()
     {
-        //
+        $rackList = RackList::all();
+        return view('pages.register', compact('rackList'));
     }
 
     /**
-     * Display the specified resource.
+     * Save the request registration made by the admin.
      */
-    public function show(string $id)
+    public function save_request(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+        $input = $request->all();
+        $input['status'] = 'I';
+        $res = Registration::create($input);
+
+        $mail_data = [
+            'title'=> 'Dear Sir/Madam,',
+            'body'=> 'The server rack access request registration needs your approval.'
+        ];
+
+        Mail::to('sonam.yeshi@bt.bt')->send(new Notify($mail_data));
+        
+        Session::flash('success', 'Form submitted successfully!');
+        return redirect()->back();
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the approved request list.
      */
-    public function edit(string $id)
+    public function approved()
     {
-        //
+        $approvals = DB::table('registrations')
+            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
+            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
+            ->where('registrations.status', '!=', 'I')
+            ->get();
+        // $approvals = Registration::where('status', 'I')->get();
+
+        return view('dashboard', compact('approvals'));
     }
 
     /**

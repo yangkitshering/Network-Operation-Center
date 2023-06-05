@@ -8,6 +8,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/gif" sizes="16x16">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -50,6 +51,20 @@
             {{-- @yield('content') --}}
         </main>
     </div>
+    
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <div class="row content-justify-between">
+                <div class="col-md-8 col-12 text-center text-lg-left text-md-left">
+                    <p class="copyright">Copyright © Bhutan Telecom Limited
+                        <?php echo date("Y"); ?>.<br>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>

@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SmsController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,20 +26,35 @@ use App\Http\Controllers\ApprovalController;
 // --- Index/Landing Page ----
 Route::get('/', [Controller::class, 'index'])->name('index');
 
-//admin only routes
+// routes for authenticated users with role (user & admin)
 Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    Route::put('/approval_mail/{id}', [AdminController::class, 'approve'])->name('approve_reject');
-
     Route::get('/registration', [AdminController::class, 'register'])->name('registration');
+    Route::post('/save', [AdminController::class, 'save'])->name('save');
+    Route::get('/view-request/{id}', [AdminController::class, 'viewRequest']);
+});
+
+// routes only for authenticated role (user)
+Route::middleware(['auth', 'verified','role:user'])->group(function(){
+    Route::get('/ticket', [UserController::class, 'ticket'])->name('ticket');
+    Route::post('/raiseTicket', [UserController::class, 'saveTicket'])->name('saveTicket');
+    Route::get('/my_request', [UserController::class, 'my_request'])->name('user_request');
+});
+
+// routes only for authenticated role (admin)
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
+    Route::put('/process_request/{id}', [AdminController::class, 'processRequest'])->name('approve_reject');
     Route::get('/pendingList', [AdminController::class, 'index'])->name('pendingList');
     Route::get('/approvedList', [AdminController::class, 'approved'])->name('approvedList');
-    Route::post('/save', [AdminController::class, 'save_request'])->name('save');
-
+    Route::get('/ticketList', [AdminController::class, 'displayTicket'])->name('showTickets');
+    Route::get('/ticketView/{id}', [AdminController::class, 'viewTicket']);
+    Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close');
 });
 
 //Approval route on clicking the mail link
 Route::get('/approval_reject', [ApprovalController::class, 'process'])->name('approval.process');
+//exit route on clicking the mail link
+Route::get('/exit-entry/{id}', [Controller::class, 'exit'])->name('exit');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -50,8 +66,8 @@ Route::middleware('auth')->group(function () {
 //auth routes
 require __DIR__.'/auth.php';
 
-//for users only
-Route::post('/save_request', [HomeController::class, 'save_request'])->name('save.register');
+//for users unauthenticated only
+// Route::post('/save_request', [HomeController::class, 'save_request'])->name('save.register');
 Route::get('/feedback', [HomeController::class, 'feedback'])->name('feedback');
 Route::post('/save_feedback', [HomeController::class, 'saveFeedback'])->name('save-feedback');
 

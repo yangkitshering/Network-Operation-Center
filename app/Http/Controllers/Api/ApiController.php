@@ -28,7 +28,8 @@ class ApiController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'=>'required',
-            'empID'=>'required',
+            'organization'=>'required',
+            'contact' => 'required',
             'email'=>'required|email|unique:users',
             'password'=>['required','string','min:5']
         ]);
@@ -38,15 +39,20 @@ class ApiController extends Controller
                 'success' => false,
                 'message' => $validator->errors()->get('name')
             ]);
-        }else if($validator->errors()->first('empID') != ""){
+        }else if($validator->errors()->first('organization') != ""){
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->get('empID')
+                'message' => $validator->errors()->get('organization')
             ]);
         }else if($validator->errors()->first('email') != ""){
             return response()->json([
                 'success' => false,
                 'message' => $validator->errors()->get('email')
+            ]);
+        }else if($validator->errors()->first('contact') != ""){
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->get('contact')
             ]);
         }else if($validator->errors()->first('password') != ""){
             return response()->json([

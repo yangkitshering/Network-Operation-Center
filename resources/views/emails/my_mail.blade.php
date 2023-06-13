@@ -10,13 +10,13 @@
 
 <body>
     <h4>{{ $mail_data['title'] }}</h4>
-    <p> {{ $mail_data['body'] }}</p>
-    <p> {{ 'Kindly click on the button to proceed.' }}</p>
+    <p> &nbsp;{{ $mail_data['body'] }}</p>
+    <p> &nbsp;{{ 'Kindly click on the button to proceed.' }}</p>
     <br>
     {{-- <a href="{{ route('approval.process') }}" class="btn btn-success btn-sm">
         <i class="far fa-edit"></i>
         Approve/Reject</a> --}}
-    <a href="{{ route('approval.process') }}" target="_blank"
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{{ route('approval.process') }}" target="_blank"
         style="background-color: #4ca8af; color: white; padding: 15px 25px; text-align: center; display: inline-block; text-decoration: none; font-size: 16px; border-radius: 4px; border: none;">{{
         __('Approve/Reject') }}</a>
 </body>

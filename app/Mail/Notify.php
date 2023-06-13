@@ -12,14 +12,16 @@ use Illuminate\Queue\SerializesModels;
 class Notify extends Mailable
 {
     use Queueable, SerializesModels;
-    public $mail_data;
+    public $mail_data, $status, $id;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($mail_data)
+    public function __construct($mail_data, $status, $id)
     {
         $this->mail_data = $mail_data;
+        $this->status = $status;
+        $this->id = $id;
     }
 
     /**
@@ -37,9 +39,10 @@ class Notify extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'emails.notify',
-        );
+            return new Content(
+                view: 'emails.approve',
+            );
+        
     }
 
     /**

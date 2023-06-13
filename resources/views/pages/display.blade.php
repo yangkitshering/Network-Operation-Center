@@ -1,14 +1,15 @@
 <section>
-    {{-- <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Recorded Information') }}
+    <header>
+        <h2 class="text-lg font-medium text-gray-900 text-center">
+            {{ __('Pending Approval Request') }}
         </h2>
 
-        <p class="mt-1 text-sm text-gray-600">
+        {{-- <p class="mt-1 text-sm text-gray-600">
             {{ __("List of approved requests") }}
-        </p>
+        </p> --}}
 
-    </header> --}}
+    </header>
+    <br>
 
     <table border="1" id="historyTable" class="table table-bordered table-striped">
         <thead>
@@ -23,29 +24,30 @@
 
         <tbody>
 
-            @foreach($approvals as $approval)
+            @foreach($requests as $res)
             <tr>
-                <td>{{$approval->organization}}</td>
-                <td>{{$approval->rack_name}}</td>
-                <td>{{$approval->reason}}</td>
-                @if($approval->status == 'I')
+                <td>{{$res->organization}}</td>
+                <td>{{$res->rack_name}}</td>
+                <td>{{$res->reason}}</td>
+                @if($res->status == 'I')
                 <td>{{'Pending'}}</td>
-                @elseif ($approval->status == 'A')
+                @elseif ($res->status == 'A')
                 <td>{{'Approved'}}</td>
                 @else
                 <td>{{'Rejected'}}</td>
                 @endif
 
                 <td>
-                    @if($approval->status == 'I')
-                    <form action="approval_mail/{{ $approval->id }}" method="post">
+                    @if(Auth::user()->hasRole('admin'))
+                    @if($res->status == 'I')
+                    <form action="process_request/{{ $res->id }}" method="post">
+
+                        <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
+                            <i class="far fa-edit"></i>
+                            &#x1F441;View</a>
+
                         @csrf
                         @method('PUT')
-
-                        <button type="submit" class="btn btn-info btn-sm delete-confirm" value="2" name='flag'>
-                            <i class="far fa-edit"></i>
-                            &#x1F441;View</button>
-
                         <button type="submit" class="btn btn-success btn-sm" value="1" name='flag'>
                             <i class="far fa-edit"></i>
                             &#x2705; Approve</button>
@@ -55,13 +57,16 @@
                             &#x2718;Reject</button>
                     </form>
                     @else
-                    <form action="approval_mail/{{ $approval->id }}" method="post">
-                        @csrf
-                        @method('PUT')
-                        <button type="submit" class="btn btn-info btn-sm delete-confirm" value="2" name='flag'>
-                            <i class="far fa-edit"></i>
-                            &#x1F441;View</button>
-                    </form>
+                    <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
+                        <i class="far fa-edit"></i>
+                        &#x1F441;View</a>
+
+                    @endif
+                    @else
+                    <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
+                        <i class="far fa-edit"></i>
+                        &#x1F441;View</a>
+
                     @endif
                 </td>
             </tr>

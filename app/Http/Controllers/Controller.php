@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\RackList;
+use App\Models\Registration;
+use Carbon\Carbon;
 
 class Controller extends BaseController
 {
@@ -17,10 +19,21 @@ class Controller extends BaseController
     public function index()
     {
         if(! Auth::user()) {
-            $rackList = RackList::all();
-            return view('welcome', compact('rackList'));
+            // $rackList = RackList::all();
+            // return view('welcome', compact('rackList'));
+            return view('welcome');
         } else {
             return redirect(RouteServiceProvider::HOME);
         }
+    }
+
+    //update status on exit
+    public function exit($id){
+        $res = Registration::where('id', $id)->first();
+        $res->visitTo = Carbon::now();
+        $res->exited = 1;
+        $res->save();  
+
+        return redirect('/');
     }
 }

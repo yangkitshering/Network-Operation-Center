@@ -15,14 +15,29 @@
             <!-- Navigation Links -->
             <div class="space-x-8 sm:-my-px sm:ml-12 sm:flex">
                 <x-nav-link :href="route('registration')" :active="request()->routeIs('registration')">
-                    {{ __('Request Register') }}
+                    {{ __('Make Request') }}
                 </x-nav-link>
+                @if (Auth::user()->hasRole('admin'))
                 <x-nav-link :href="route('pendingList')" :active="request()->routeIs('/pendingList')">
                     {{ __('Pending Request') }}
                 </x-nav-link>
+
                 <x-nav-link :href="route('approvedList')" :active="request()->routeIs('/approvedList')">
-                    {{ __('Approved List') }}
+                    {{ __('Approved/Rejected Request') }}
                 </x-nav-link>
+
+                <x-nav-link :href="route('showTickets')" :active="request()->routeIs('/showTickets')">
+                    {{ __('Tickets') }}
+                </x-nav-link>
+                @endif
+                @if (Auth::user()->hasRole('user'))
+                <x-nav-link :href="route('ticket')" :active="request()->routeIs('/ticket')">
+                    {{ __('Raise Your Ticket') }}
+                </x-nav-link>
+                <x-nav-link :href="route('user_request')" :active="request()->routeIs('/user_request')">
+                    {{ __('My Request') }}
+                </x-nav-link>
+                @endif
             </div>
 
             <!-- Settings Dropdown -->
@@ -45,9 +60,11 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        @if(Auth::user()->hasRole('admin'))
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">

@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('contact');
             $table->string('organization');
             $table->integer('rack');
-            $table->string('reason');
+            $table->string('reason'); 
+            $table->timestamp('visitFrom')->nullable();
+            $table->timestamp('visitTo')->nullable();
+            $table->boolean('exited');
             $table->char('status');
             $table->timestamps();
         });

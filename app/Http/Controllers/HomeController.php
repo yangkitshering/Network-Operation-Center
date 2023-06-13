@@ -63,7 +63,7 @@ class HomeController extends Controller
         Mail::to('sonam.yeshi@bt.bt')->send(new ApprovalRequest($mail_data));
 
 
-        Session::flash('success', 'Your request submitted successfully!');
+        Session::flash('success', 'Your request submitted successfully.');
         return redirect()->back();
     }
 

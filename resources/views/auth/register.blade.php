@@ -1,4 +1,5 @@
 <x-guest-layout>
+    <h1 class="text-center">Registration</h1><br>
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
@@ -9,11 +10,25 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <!-- Organization -->
+        <div class="mt-4">
+            <x-input-label for="organization" :value="__('Organization Name')" />
+            <x-text-input id="organization" class="block mt-1 w-full" type="text" name="organization" :value="old('organization')" required autofocus autocomplete="organization" />
+            <x-input-error :messages="$errors->get('organization')" class="mt-2" />
+        </div>
+
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <!-- Mobile number -->
+        <div class="mt-4">
+            <x-input-label for="contact" :value="__('Mobile Number')" />
+            <x-text-input id="contact" class="block mt-1 w-full" type="text" name="contact" :value="old('contact')" required autofocus autocomplete="contact" />
+            <x-input-error :messages="$errors->get('contact')" class="mt-2" />
         </div>
 
         <!-- Password -->

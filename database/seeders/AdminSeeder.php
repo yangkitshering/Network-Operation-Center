@@ -16,8 +16,9 @@ class AdminSeeder extends Seeder
     {
         $usr = User::create([
             'name' => 'Administrator',
-            'empID' => '915',
+            'organization' => 'Bhutan Telecom Limited',
             'email' => 'admin@bt.bt',
+            'contact' => '17123410',
             'password' => Hash::make('12345678'),
         ]);
         $usr->attachRole('admin');

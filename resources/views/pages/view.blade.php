@@ -21,6 +21,10 @@
                                     <td>{{ $requests->name }}</td>
                                 </tr>
                                 <tr>
+                                    <th>CID</th>
+                                    <td>{{ $requests->cid }}</td>
+                                </tr>
+                                <tr>
                                     <th>Organization</th>
                                     <td>{{ $requests->organization }}</td>
                                 </tr>

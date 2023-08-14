@@ -28,12 +28,9 @@ class Controller extends BaseController
     }
 
     //update status on exit
-    public function exit($id){
-        $res = Registration::where('id', $id)->first();
-        $res->visitTo = Carbon::now();
-        $res->exited = 1;
-        $res->save();  
-
-        return redirect('/');
+    public function user_redirect_to_login()
+    { 
+            return redirect('login');
+        
     }
 }

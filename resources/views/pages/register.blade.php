@@ -67,6 +67,14 @@
 
                         <div>
                             {{--
+                            <x-input-label for="cid" :value="__('CID')" /> --}}
+                            <x-text-input id="cid" name="cid" type="text" class="mt-1 block w-full hidden" required
+                                autofocus autocomplete="cid" value="{{ Auth::user()->cid }}" />
+                            <x-input-error class="mt-2" :messages="$errors->get('cid')" />
+                        </div>
+
+                        <div>
+                            {{--
                             <x-input-label for="email" :value="__('Email')" /> --}}
                             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full hidden" required
                                 autocomplete="username" value="{{ Auth::user()->email }}" />

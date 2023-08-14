@@ -64,6 +64,10 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+
+                        <x-dropdown-link :href="route('manage-user')">
+                            {{ __('Manage User') }}
+                        </x-dropdown-link>
                         @endif
 
                         <!-- Authentication -->

@@ -2,6 +2,15 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    @if(session()->has('message'))
+    <div class="mt-4">
+        <p class="alert alert-info" style="color: red">
+            {{ session()->get('message') }}
+        </p>
+    </div>
+    <br>
+    @endif
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
@@ -33,6 +42,11 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
+            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                href="/register">
+                {{ __('Register?') }}
+            </a>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             @if (Route::has('password.request'))
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="{{ route('password.request') }}">

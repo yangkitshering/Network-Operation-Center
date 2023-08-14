@@ -28,8 +28,16 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        if(auth()->check()){
+            if(auth()->user()->verified){
+                return redirect()->intended(RouteServiceProvider::HOME);
+            }else{
+                auth()->logout();
+                return redirect()->route('login')->with('message', "Your account needs an administrator approval in order to login.");
+            }
+        }
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        // return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**

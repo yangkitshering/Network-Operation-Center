@@ -54,6 +54,20 @@ class AdminController extends Controller
     }
 
     /**
+     * Show the pending request list.
+     */
+    public function pending()
+    {
+        $requests = DB::table('registrations')
+            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
+            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
+            ->where('registrations.status', '=', 'I')
+            ->get();
+
+        return view('pages.pending', compact('requests'));
+    }
+
+    /**
      * Show the approved request list.
      */
     public function approved()
@@ -176,5 +190,73 @@ class AdminController extends Controller
         $ticket->save(); 
 
         return redirect('ticketList');
+    }
+
+    /**
+     * load user manage page.
+     */
+    public function manage(){
+        $users = User::all(); 
+        return view('admin.manage', compact('users'));
+    
+    }
+
+    /**
+     * load user manage page.
+     */
+    public function edit_user($id){
+        
+        if($id == auth()->user()->id) {
+            abort(403, 'Access Denied');
+        } else {
+            $user = User::find($id); 
+        return view('admin.user-edit', compact('user'));
+        }
+    }
+
+    // POST :: Update User
+    public function update_user(Request $request, $id)
+    {
+        $usr = User::find($id);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:200'],
+            'cid' => ['required', 'string', 'max:11'],
+            'organization' => 'required',
+            'contact' => ['required', 'max:8'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+        ]);
+
+        $verified = 0;
+        if($request->verify != null){
+            $verified = 1;
+        }else{
+            $verified = 0;
+        }
+
+            $usr->update([
+                    'name' => $request->name,
+                    'cid' => $request->cid,
+                    'organization' => $request->organization,
+                    'contact' => $request->contact,
+                    'email' => $request->email,  
+                    'verified' => $verified
+            ]);
+
+        
+            // Detaching Role Before Assigning The Updated Role
+            if($usr->hasRole('user')) { $usr->detachRole('user'); } else { $usr->detachRole('admin'); }
+
+            // Updating the Role
+            User::find($id)->attachRole($request->roletype);
+
+            return redirect('manage_users');
+    }
+
+    // DELETE :: Delete User
+    public function delete_user(User $id)
+    {
+        $id->delete();
+        return redirect('manage_users');
     }
 }

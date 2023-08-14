@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('registrations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('cid');
             $table->string('email');
             $table->string('contact');
             $table->string('organization');

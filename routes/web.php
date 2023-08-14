@@ -39,22 +39,31 @@ Route::middleware(['auth', 'verified','role:user'])->group(function(){
     Route::get('/ticket', [UserController::class, 'ticket'])->name('ticket');
     Route::post('/raiseTicket', [UserController::class, 'saveTicket'])->name('saveTicket');
     Route::get('/my_request', [UserController::class, 'my_request'])->name('user_request');
+    Route::put('/exited/{id}', [UserController::class, 'exit_now'])->name('exit-now');
 });
 
 // routes only for authenticated role (admin)
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
     Route::put('/process_request/{id}', [AdminController::class, 'processRequest'])->name('approve_reject');
-    Route::get('/pendingList', [AdminController::class, 'index'])->name('pendingList');
+    // Route::get('/pendingList', [AdminController::class, 'index'])->name('pendingList');
+    Route::get('/pendingList', [AdminController::class, 'pending'])->name('pendingList');
     Route::get('/approvedList', [AdminController::class, 'approved'])->name('approvedList');
     Route::get('/ticketList', [AdminController::class, 'displayTicket'])->name('showTickets');
     Route::get('/ticketView/{id}', [AdminController::class, 'viewTicket']);
     Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close');
+
+    Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
+    Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
+    Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
+    Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
 });
 
 //Approval route on clicking the mail link
 Route::get('/approval_reject', [ApprovalController::class, 'process'])->name('approval.process');
+
 //exit route on clicking the mail link
-Route::get('/exit-entry/{id}', [Controller::class, 'exit'])->name('exit');
+Route::get('/exit-entry', [Controller::class, 'user_redirect_to_login'])->name('exit.redirect');
+// Route::get('/exit-entry/{id}', [Controller::class, 'exit'])->name('exit');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

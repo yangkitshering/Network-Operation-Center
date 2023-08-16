@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('cid');
             $table->string('email');
             $table->string('contact');
-            $table->string('organization');
+            $table->integer('dc');
+            $table->integer('organization');
             $table->integer('rack');
             $table->string('reason'); 
             $table->timestamp('visitFrom')->nullable();

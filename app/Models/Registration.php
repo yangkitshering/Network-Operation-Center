@@ -14,6 +14,7 @@ class Registration extends Model
         'cid',
         'email',
         'contact',
+        'dc',
         'organization',
         'rack',
         'reason',

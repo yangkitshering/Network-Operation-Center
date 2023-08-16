@@ -24,4 +24,9 @@ class ApprovalController extends Controller
 
         return redirect('login');
    }
+   
+   public function new_user_approve()
+    {
+        return redirect('login');
+   }
 }

@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rack_lists', function (Blueprint $table) {
+        Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->string('rack_no');
-            $table->string('rack_name');
-            $table->string('desc');
-            $table->integer('org_id');
+            $table->string('org_name');
+            $table->string('org_address');
+            $table->integer('dc_id');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rack_lists');
+        Schema::dropIfExists('organizations');
     }
 };

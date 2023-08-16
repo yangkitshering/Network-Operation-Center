@@ -32,6 +32,13 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/registration', [AdminController::class, 'register'])->name('registration');
     Route::post('/save', [AdminController::class, 'save'])->name('save');
     Route::get('/view-request/{id}', [AdminController::class, 'viewRequest']);
+
+    Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
+    Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
+    Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
+    Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
+
+    Route::get('/view-user/{id}', [AdminController::class, 'view_user']);
 });
 
 // routes only for authenticated role (user)
@@ -52,14 +59,17 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
     Route::get('/ticketView/{id}', [AdminController::class, 'viewTicket']);
     Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close');
 
-    Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
-    Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
-    Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
-    Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
+    // Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
+    // Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
+    // Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
+    // Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
 });
 
 //Approval route on clicking the mail link
 Route::get('/approval_reject', [ApprovalController::class, 'process'])->name('approval.process');
+
+//new user approval mail link
+Route::get('/newUser_approval', [ApprovalController::class, 'new_user_approve'])->name('newUser.approval');
 
 //exit route on clicking the mail link
 Route::get('/exit-entry', [Controller::class, 'user_redirect_to_login'])->name('exit.redirect');
@@ -80,6 +90,10 @@ require __DIR__.'/auth.php';
 Route::get('/feedback', [HomeController::class, 'feedback'])->name('feedback');
 Route::post('/save_feedback', [HomeController::class, 'saveFeedback'])->name('save-feedback');
 
+//add user routes
+Route::get('/add_user', [AdminController::class, 'add'])->name('add_user');
+// Save new user
+Route::post('/save_user', [AdminController::class, 'add_user'])->name('save_user');
 
 //SMS &mail
 // Route::get('/sms', [SmsController::class, 'sms']);

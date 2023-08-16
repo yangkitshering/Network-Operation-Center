@@ -22,7 +22,7 @@
                                 <tr>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
-                                    <th>Reason</th>
+                                    <th>Purpose of Visit</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -32,7 +32,7 @@
 
                                 @foreach($requests as $res)
                                 <tr>
-                                    <td>{{$res->organization}}</td>
+                                    <td>{{$res->org_name}}</td>
                                     <td>{{$res->rack_name}}</td>
                                     <td>{{$res->reason}}</td>
                                     @if ($res->status == 'A')

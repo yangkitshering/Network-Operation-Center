@@ -48,10 +48,11 @@ class UserController extends Controller
     // function to view  users own request.
     public function my_request(){
         
-        $requests = DB::table('registrations')
-            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
-            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
-            ->where('registrations.email', '=', Auth::user()->email)
+        $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('r.email', '=', Auth::user()->email)
             ->get();
 
         return view('pages.user_request', compact('requests'));

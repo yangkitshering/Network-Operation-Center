@@ -17,14 +17,14 @@ class AdminSeeder extends Seeder
         $usr = User::create([
             'name' => 'Administrator',
             'cid' => '11000000011',
-            'organization' => 'Bhutan Telecom Limited',
+            'organization' => 1,
             'email' => 'admin@bt.bt',
             'contact' => '17123410',
             'password' => Hash::make('12345678'),
             'verified' => 1,
             'user_ref_id' => 0,
-            'file_name' => null,
-            'file_path' => null
+            // 'file_name' => null,
+            // 'file_path' => null
         ]);
         $usr->attachRole('admin');
     }

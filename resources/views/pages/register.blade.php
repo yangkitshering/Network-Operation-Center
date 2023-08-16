@@ -90,13 +90,39 @@
                             <x-input-error class="mt-2" :messages="$errors->get('contact')" />
                         </div>
 
+                        <div class="mt-4">
+                            <x-input-label for="dc" :value="__('Data Center')" />
+                            <select id="dc" class="block mt-1 w-full" name="dc" required autofocus>
+                                <option value="" disabled selected>Select a data center</option>
+                                @foreach($dc_lists as $dc)
+                                <!-- Replace $dcList with the variable name containing your data center options -->
+                                <option value="{{ $dc->id }}">{{ $dc->dc_name }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('dc')" class="mt-2" />
+                        </div>
+
+                        <div class="mt-4">
+                            <x-input-label for="organization" :value="__('Organization Name')" />
+                            <select id="organization" class="block mt-1 w-full" name="organization" required autofocus>
+                                <option value="" disabled selected>Select an organization</option>
+                                @foreach($organizations as $organization)
+                                <option value="{{ $organization->id }}">{{ $organization->org_name}}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('organization')" class="mt-2"   />
+                        </div>
+
                         <div>
-                            {{--
-                            <x-input-label for="organization" :value="__('Organization Name')" /> --}}
-                            <x-text-input id="organization" name="organization" type="text"
-                                class="mt-1 block w-full hidden" required autofocus autocomplete="organization"
-                                value="{{ Auth::user()->organization }}" />
-                            <x-input-error class="mt-2" :messages="$errors->get('organization')" />
+                            <x-input-label for="rack" :value="__('Rack Number')" />
+                            <select id="rack" name="rack" class="mt-1 block w-full" required autofocus
+                                autocomplete="rack">
+                                <option value="">Select your rack number</option>
+                                @foreach($rack_lists as $rack)
+                                <option value="{{ $rack->id }}">{{ $rack->rack_no }}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error class="mt-2" :messages="$errors->get('rack')" />
                         </div>
 
                         <div>
@@ -116,26 +142,14 @@
                         </div>
 
                         <div>
-                            <x-input-label for="rack" :value="__('Rack Number')" />
-                            <select id="rack" name="rack" class="mt-1 block w-full" required autofocus
-                                autocomplete="rack">
-                                <option value="">Select your rack number</option>
-                                @foreach($rackList as $rack)
-                                <option value="{{ $rack->id }}">{{ $rack->rack_no }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('rack')" />
-                        </div>
-
-                        <div>
-                            <x-input-label for="reason" :value="__('Reason')" />
+                            <x-input-label for="reason" :value="__('Purpose of Visit')" />
                             <textarea id="reason" name="reason" type="text" class="mt-1 block w-full" required autofocus
                                 autocomplete="reason"></textarea>
                             <x-input-error class="mt-2" :messages="$errors->get('reason')" />
                         </div>
 
                         <div class="flex items-center gap-4">
-                            <x-primary-button>{{ __('Save') }}</x-primary-button>
+                            <x-primary-button>{{ __('Submit') }}</x-primary-button>
                         </div>
                     </form>
 
@@ -147,6 +161,10 @@
                                 text: '{{ session('success') }}',
                                 icon: 'success',
                                 confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if(result.isConfirmed){
+                                    window.location.href = "{{ route('dashboard')}}";
+                                }
                             });
                         });
                     </script>

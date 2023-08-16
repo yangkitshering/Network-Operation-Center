@@ -14,39 +14,76 @@
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                     <div class="card">
-                        <div class="card-header">User Request Details</div>
+                        <div class="card-header">User Details</div>
                         <div class="card-body">
                             <table>
                                 <tr>
-                                    <th>Requester Name</th>
-                                    <td>{{ $requests->name }}</td>
+                                    <th>Name</th>
+                                    <td>{{ $user->name }}</td>
                                 </tr>
                                 <tr>
                                     <th>CID</th>
-                                    <td>{{ $requests->cid }}</td>
+                                    <td>{{ $user->cid }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Organization Name</th>
-                                    <td>{{ $requests->org_name }}</td>
+                                    <th>Organization</th>
+                                    <td>{{ $user->organization }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Email Address</th>
-                                    <td>{{ $requests->email }}</td>
+                                    <th>Email</th>
+                                    <td>{{ $user->email }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Contact No</th>
-                                    <td>{{ $requests->contact }}</td>
+                                    <th>Contact</th>
+                                    <td>{{ $user->contact }}</td>
                                 </tr>
-                                <tr>
-                                    <th>Rack Number</th>
+
+                                @foreach($cid_files as $file)
+                                    <tr>
+                                        <th>Attach File</th>
+                                        @if(substr($file->path, strpos($file->path, '.')+1) == 'pdf')
+                                        <td>
+                                            <a href="{{ asset('storage/'. $file->path) }}" target="_blank">
+                                                {{-- <input type="text"
+                                                    value="{{substr($file->path, strpos($file->path, '.')+1)}}" /> --}}
+                                                View Attach File
+                                            </a>
+                                        </td>
+                                            @else
+                                           <td>
+                                            <a href="{{ asset('storage/'. $file->path) }}" target="_blank">
+                                                <img src="{{ asset('storage/'. $file->path) }}" height="100"
+                                                    width="100" />
+                                            </a>
+                                        </td>
+                                            @endif
+                                        
+                                    </tr>
+                                    @endforeach
+
+                                    <tr>
+                                        <th>Approve</th>
+                                        <td><div>
+                                            <label for="role" class="col-md-1 col-form-label text-md-right">{{ __('Approve')
+                                                }}</label>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <input type="checkbox" class="" id="verify" name="verify" value="1"
+                                                @if($user->verified ==
+                                            1)
+                                            checked
+                                            @endif>
+                                        </div></td>
+                                    </tr>
+                                {{-- <tr>
+                                    <th>rack Number</th>
                                     <td>{{ $requests->rack_no }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Rack Name</th>
+                                    <th>rack Name</th>
                                     <td>{{ $requests->rack_name }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Purpose of Visit</th>
+                                    <th>reason</th>
                                     <td>{{ $requests->reason }}</td>
                                 </tr>
                                 <tr>
@@ -56,7 +93,7 @@
                                 <tr>
                                     <th>Visit To</th>
                                     <td>{{ $requests->visitTo }}</td>
-                                </tr>
+                                </tr> 
                                 <tr>
                                     <th>Status</th>
                                     @if($requests->status == 'I')
@@ -74,14 +111,14 @@
                                     @else
                                     <td>{{'Yes'}}</td>
                                     @endif
-                                </tr>
-                                @if($requests->status == 'I')
+                                </tr>--}}
+                                {{-- @if($user->status == 'I')
                                 <tr>
                                     <th></th>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <form id="approve-form" method="POST"
-                                                action="{{ route('approve_reject', $requests->id) }}"
+                                                action="{{ route('approve_reject', $user->id) }}"
                                                 class="approval-form">
                                                 @csrf
                                                 @method('PUT')
@@ -89,7 +126,7 @@
                                                     name='flag'>Approve</button>
                                             </form>
                                             <form id="reject-form" method="POST"
-                                                action="{{ route('approve_reject', $requests->id) }}"
+                                                action="{{ route('approve_reject', $user->id) }}"
                                                 class="approval-form">
                                                 @csrf
                                                 @method('PUT')
@@ -99,7 +136,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                @endif
+                                @endif --}}
                             </table>
 
                             @if (session('success'))
@@ -110,11 +147,7 @@
                                 text: '{{ session('success') }}',
                                 icon: 'success',
                                 confirmButtonText: 'OK'
-                            }).then((result) => {
-                                        if(result.isConfirmed){
-                                            window.location.href = "{{ route('pendingList')}}";
-                                        }
-                                    });
+                            });
                         });
                             </script>
                             @endif

@@ -14,7 +14,19 @@ use App\Models\Registration;
 use Illuminate\Support\Facades\DB;
 use App\Models\RackList;
 use App\Models\Ticket;
+use App\Models\DataCenter;
+use App\Models\Organization;
 use Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Storage;
+use App\Mail\UserApproval;
+use App\Mail\UserApprovalNotify;
+use Illuminate\Support\Facades\App;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminController extends Controller
 {
@@ -35,20 +47,23 @@ class AdminController extends Controller
     public function index()
     {
         if(Auth::user()->hasRole('admin')){
-            $requests = DB::table('registrations')
-            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
-            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
-            ->where('registrations.status', '=', 'I')
+            $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('r.status', '=', 'I')
             ->get();
 
             return view('dashboard', compact('requests'));
         }else{
-            $requests = DB::table('registrations')
-            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
-            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
-            ->where('registrations.email', '=', Auth::user()->email)
+            $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('r.email', '=', Auth::user()->email)
             ->get();
 
+            // dd($requests);
             return view('pages.user_request', compact('requests'));
         }     
     }
@@ -58,10 +73,11 @@ class AdminController extends Controller
      */
     public function pending()
     {
-        $requests = DB::table('registrations')
-            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
-            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
-            ->where('registrations.status', '=', 'I')
+        $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('r.status', '=', 'I')
             ->get();
 
         return view('pages.pending', compact('requests'));
@@ -72,10 +88,11 @@ class AdminController extends Controller
      */
     public function approved()
     {
-        $requests = DB::table('registrations')
-            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
-            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
-            ->where('registrations.status', '!=', 'I')
+        $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('r.status', '!=', 'I')
             ->get();
         // $approvals = Registration::where('status', 'I')->get();
 
@@ -87,12 +104,14 @@ class AdminController extends Controller
      */
     public function viewRequest($id)
     {
-        $requests = DB::table('registrations')
-            ->join('rack_lists', 'registrations.rack', '=', 'rack_lists.id')
-            ->select('registrations.*', 'rack_lists.rack_no', 'rack_lists.rack_name')
-            ->where('registrations.id', '=', $id)
+        $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('r.id', '=', $id)
             ->get()->first();
 
+            // dd($requests);
             return view('pages.view', compact('requests'));
     }
 
@@ -111,6 +130,7 @@ class AdminController extends Controller
            $approval = Registration::where('id', $id)->first();
            $mail_data['body'] = 'Your request for NOC server rack access has been approved.';
            $approval->status = 'A';
+           $msg = 'Request has been Approved';
            $approval->save();  
         }else{
             //Reject
@@ -118,13 +138,17 @@ class AdminController extends Controller
             $mail_data['body'] = 'Your request for NOC server rack access has been rejected.
                                   Kindly request next time.';
             $approval->status = 'R';
+            $msg = 'Request has been Rejected';
             $approval->save(); 
         }
 
         $notify_email = $approval->email;
         $status = $approval->status;
         Mail::to($notify_email)->send(new Notify($mail_data, $status, $id));
-        return redirect('dashboard');
+
+        Session::flash('success', $msg);
+        // return redirect('dashboard');
+        return redirect()->back();
     }
 
     /**
@@ -132,8 +156,24 @@ class AdminController extends Controller
      */
     public function register()
     {
-        $rackList = RackList::all();
-        return view('pages.register', compact('rackList'));
+        $organizations = DB::table('organizations')
+        ->select('organizations.*')
+        ->where('organizations.id', '=', Auth::user()->organization)
+        ->get();
+
+        $rack_lists = DB::table('rack_lists')
+        ->join ('organizations', 'rack_lists.org_id', '=', 'organizations.id')
+        ->select('rack_lists.*')
+        ->where('rack_lists.org_id', '=', Auth::user()->organization)
+        ->get();
+
+        $dc_lists = DB::table('data_centers')
+        ->join('organizations','organizations.dc_id', '=', 'data_centers.id')
+        ->select('data_centers.*')
+        ->where('organizations.id', '=', Auth::user()->organization)
+        ->get();
+
+        return view('pages.register', compact('rack_lists','organizations','dc_lists'));
     }
 
     /**
@@ -196,7 +236,24 @@ class AdminController extends Controller
      * load user manage page.
      */
     public function manage(){
-        $users = User::all(); 
+        // $users = User::all();
+        if(Auth::user()->hasRole('admin')){
+            // $users = User::all();
+            $users = DB::table('users')
+            ->join('organizations', 'users.organization', '=', 'organizations.id')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->select('users.*', 'organizations.org_name', 'roles.name as role')
+            ->get();
+        }else{
+            $users = DB::table('users')
+            ->join('organizations', 'users.organization', '=', 'organizations.id')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->select('users.*', 'organizations.org_name', 'roles.name as role')
+            ->where('users.user_ref_id', '=', Auth::user()->id)
+            ->get();
+        }
         return view('admin.manage', compact('users'));
     
     }
@@ -210,7 +267,19 @@ class AdminController extends Controller
             abort(403, 'Access Denied');
         } else {
             $user = User::find($id); 
-        return view('admin.user-edit', compact('user'));
+
+            $organizations = DB::table('organizations')
+            ->join('users', 'users.organization', '=', 'organizations.id')
+            ->select('organizations.*')
+            ->where('users.id', '=', $id)
+            ->get();
+
+            $cid_files = DB::table('c_i_d_files')
+                    ->select('c_i_d_files.*')
+                    ->where('c_i_d_files.user_id', '=', $id)
+                    ->get();
+                    
+        return view('admin.user-edit', compact('user', 'cid_files', 'organizations'));
         }
     }
 
@@ -250,7 +319,24 @@ class AdminController extends Controller
             // Updating the Role
             User::find($id)->attachRole($request->roletype);
 
-            return redirect('manage_users');
+            $mail_data = [
+                'title'=> 'Hello '. $usr->name .',',
+                'body'=> 'Your user registration has been approved by the administrator.'
+            ];
+
+        $org_name = DB::table('organizations')->where('id', $usr->organization)->value('org_name');
+            // Generate the PDF
+        $pdf= Pdf::loadView('pages.eCard', compact('usr', 'org_name'));
+        // Save the PDF to storage
+       $pdfFileName = 'eCard_' . $usr->name . '_' . time() . '.pdf'; // Generate a unique name
+       $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
+       $eCard_path = '/public/'.$pdfFileName;
+            Mail::to($usr->email)
+            ->send(new UserApprovalNotify($mail_data, $eCard_path));
+
+            Session::flash('success', 'New User approved successfully.');
+            // return redirect('manage_users');
+            return redirect()->back();
     }
 
     // DELETE :: Delete User
@@ -258,5 +344,104 @@ class AdminController extends Controller
     {
         $id->delete();
         return redirect('manage_users');
+    }
+
+    public function add(){
+        $organizations = Organization::all();
+        return view('pages.add_user', compact('organizations'));
+    }
+
+    //Saves the new user added by the admin.
+    public function add_user(Request $request)
+    {$request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'cid' => ['required', 'string', 'max:11'],
+        'organization' => 'required',
+        'contact' => ['required', 'max:8'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Adjust max file size as needed
+
+    ],
+    [
+        'password.required' => 'The password field is required.',
+        'password.confirmed' => 'The password confirmation does not match.',
+        'email.regex' => 'The email address format is invalid.',
+        'files.*.required' => 'The CID photo is required.',
+        'files.*.mimes' => 'The CID photo must be a valid image or PDF file.',
+        'cid.required' => 'The CID field is required.', // Error message for CID field
+
+
+    ]);
+
+    //for multiple file
+    $cid = $request->cid;
+    $filePaths = [];
+    $i = 1;
+    if ($request->hasFile('files')) {
+        foreach ($request->file('files') as $file) {
+            // Generate the filename using the provided CID and the file's original extension
+            $filename = $cid . '_'. $i . '.' . $file->getClientOriginalExtension();
+            // $original_filename = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('cid_photos', $filename, 'public');
+            $filePaths[] = $filePath;
+            $i++;
+        }
+    }
+
+   
+
+        $user = User::create([
+            'name' => $request->name,
+            'cid' => $request->cid,
+            'organization' => $request->organization,
+            'email' => $request->email,
+            'contact' => $request->contact,
+            'verified' => 0,
+            'user_ref_id' => Auth::user()->id,
+            'password' => Hash::make($request->password),
+        ]);
+
+         // Attach CID photos to the user if any were uploaded
+         if (!empty($filePaths)) {
+            $user->cidPhotos()->createMany(array_map(function ($path) {
+                return ['path' => $path];
+            }, $filePaths));
+        }
+
+        $user->attachRole('user'); // Assuming default role is 'user'
+
+        $mail_data = [
+            'title'=> 'Dear Sir/Madam,',
+            'body'=> 'New user has registered'
+        ];
+
+        Mail::to('sonam.yeshi@bt.bt')
+        // ->cc('itservices@bt.bt')
+        ->send(new UserApproval($mail_data));
+
+        Session::flash('success', 'New User added successfully.');
+            return redirect()->back();
+
+        return redirect('manage_users')->with('success', 'User added successfully.');
+    }
+
+     /**
+     * view individual ticket.
+     */
+    public function view_user($id)
+    {
+        $organizations = DB::table('organizations')
+            ->join('users', 'users.organization', '=', 'organizations.id')
+            ->select('organizations.*')
+            ->where('users.id', '=', $id)
+            ->get();
+
+            $cid_files = DB::table('c_i_d_files')
+                    ->select('c_i_d_files.*')
+                    ->where('c_i_d_files.user_id', '=', $id)
+                    ->get();
+        $user = User::where('id', '=', $id)->get()->first();
+        return view('pages.user_details', compact('user','cid_files'));
     }
 }

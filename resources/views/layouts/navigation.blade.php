@@ -64,11 +64,11 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
+                        @endif
 
                         <x-dropdown-link :href="route('manage-user')">
                             {{ __('Manage User') }}
                         </x-dropdown-link>
-                        @endif
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">

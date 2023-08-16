@@ -22,10 +22,20 @@
         <!-- Organization -->
         <div class="mt-4">
             <x-input-label for="organization" :value="__('Organization Name')" />
+            <select id="organization" class="block mt-1 w-full" name="organization" required autofocus>
+                <option value="" disabled selected>Select an organization</option>
+                @foreach($organizations as $organization)
+                <option value="{{ $organization->id }}">{{ $organization->org_name}}</option>
+                @endforeach
+            </select>
+            <x-input-error :messages="$errors->get('organization')" class="mt-2"   />
+        </div>
+        {{-- <div class="mt-4">
+            <x-input-label for="organization" :value="__('Organization Name')" />
             <x-text-input id="organization" class="block mt-1 w-full" type="text" name="organization"
                 :value="old('organization')" required autofocus autocomplete="organization" />
             <x-input-error :messages="$errors->get('organization')" class="mt-2" />
-        </div>
+        </div> --}}
 
         <!-- Email Address -->
         <div class="mt-4">
@@ -63,14 +73,20 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <!--CID photo-->
+        <!-- Multiple CID photos -->
         <div class="mt-4">
+            <x-input-label for="files" :value="__('Upload CID')" />
+            <input id="files" name="files[]" type="file" class="mt-1 block w-full" accept=".jpg, .jpeg, .png, .pdf" required multiple />
+            <x-input-error class="mt-2" :messages="$errors->get('files.*')" />
+        </div>
+
+        <!--CID photo-->
+        {{-- <div class="mt-4">
             <x-input-label for="file" :value="__('Upload File')" />
             <input id="file" name="file" type="file" class="mt-1 block w-full" accept=".jpg, .jpeg, .png, .pdf"
                 required />
             <x-input-error class="mt-2" :messages="$errors->get('file')" />
-                      
-        </div>
+        </div> --}}
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

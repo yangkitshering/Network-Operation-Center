@@ -12,11 +12,20 @@
                     <section>
                         <header>
                             <h2 class="text-lg font-medium text-gray-900 text-center">
-                                {{ __('Manage Users') }}
+                                {{ __('User list') }}
                             </h2>
                         </header>
                         <br>
 
+                        <div class="input-group">
+                            <a href="{{ route('add_user')}}">
+                                <button type="submit" class="btn btn-info" style="font-size: 13">
+                                    <i class="fas fa-user-plus"></i>
+                                    Add User
+                                </button>
+                            </a>
+                        </div>
+                        <br>
                         <table border="1" id="manage_user" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -36,10 +45,10 @@
                                 <tr>
                                     <td>{{$user->id}}</td>
                                     <td>{{$user->name}}</td>
-                                    <td>{{$user->organization}}</td>
+                                    <td>{{$user->org_name}}</td>
                                     <td>{{$user->email}}</td>
                                     <td>
-                                        @if($user->hasRole('admin'))
+                                        @if($user->role == 'admin')
                                         {{ 'Admin' }}
                                         @else
                                         {{ 'User' }}
@@ -53,6 +62,7 @@
                                         @endif
                                     </td>
 
+                                    @if(Auth::user()->hasRole('admin'))
                                     <td>
                                         @if ($user->id == auth()->user()->id)
                                         <p>Current Admin</p>
@@ -67,9 +77,14 @@
                                             <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1">
                                                 <i class="far fa-trash-alt"></i>
                                                 Delete</button>
+
+                                                {{-- <a href="view-user/{{ $user->id }}" class="btn btn-info btn-sm">
+                                                    <i class="far fa-edit"></i>
+                                                    &#x1F441;View</a>      --}}
                                         </form>
                                         @endif
                                     </td>
+                                    @endif
                                 </tr>
                                 @endforeach
 

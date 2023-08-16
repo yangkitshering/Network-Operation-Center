@@ -28,8 +28,8 @@ class User extends Authenticatable
         'password',
         'verified',
         'user_ref_id',
-        'file_name',
-        'file_path'
+        // 'file_name',
+        // 'file_path'
     ];
 
     /**
@@ -50,4 +50,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function cidPhotos()
+     {
+         return $this->hasMany(CIDFiles::class);
+    }
 }

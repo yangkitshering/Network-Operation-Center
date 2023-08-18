@@ -8,18 +8,20 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
 
 class Notify extends Mailable
 {
     use Queueable, SerializesModels;
-    public $mail_data, $status, $id;
+    public $mail_data, $eReg_Card_path, $status, $id;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($mail_data, $status, $id)
+    public function __construct($mail_data, $eReg_Card_path, $status, $id)
     {
         $this->mail_data = $mail_data;
+        $this->eReg_Card_path = $eReg_Card_path;
         $this->status = $status;
         $this->id = $id;
     }
@@ -52,6 +54,12 @@ class Notify extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        if($this->status == 'A'){
+            return [
+                Attachment::fromStorage($this->eReg_Card_path),
+            ];
+        }  else{
+            return [];
+        }
     }
 }

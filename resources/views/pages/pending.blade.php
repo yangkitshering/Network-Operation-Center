@@ -12,7 +12,7 @@
                     <section>
                         <header>
                             <h2 class="text-lg font-medium text-gray-900 text-center">
-                                {{ __('Pending Approval Request') }}
+                                {{ __('Access Pending Request') }}
                             </h2>
 
                             {{-- <p class="mt-1 text-sm text-gray-600">
@@ -29,7 +29,7 @@
                                 <tr>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
-                                    <th>Purpose of Visit</th>
+                                    <th>Purpose</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -41,7 +41,7 @@
                                 <tr>
                                     <td>{{$res->org_name}}</td>
                                     <td>{{$res->rack_name}}</td>
-                                    <td>{{$res->reason}}</td>
+                                    <td>Access request</td>
                                     @if($res->status == 'I')
                                     <td>{{'Pending'}}</td>
                                     @elseif ($res->status == 'A')

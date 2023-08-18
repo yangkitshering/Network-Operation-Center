@@ -13,14 +13,14 @@
     <p>&nbsp;{{ $mail_data['body'] }}</p>
     <br>
 
-    @if($status == 'A')
+    {{-- @if($status == 'A')
     <p>&nbsp; Please click on the link below once you exited from the server room.</p>
     <br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{route('exit-now',$id)}}" class="btn btn-info btn-sm" target="_blank">
         <i class="far fa-edit"></i>
         &#x2192;Click here on your exit</a>
-    @endif
-
+    @endif --}}
+    <p> Regards</p>
     <p> Thank you</p>
 </body>
 

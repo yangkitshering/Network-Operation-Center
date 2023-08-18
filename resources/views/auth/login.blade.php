@@ -42,21 +42,21 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
+            <x-primary-button class="ml-3">
+                {{ __('Log in') }}
+            </x-primary-button>
+            &nbsp;&nbsp;
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="/register">
                 {{ __('Register?') }}
             </a>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;
             @if (Route::has('password.request'))
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="{{ route('password.request') }}">
                 {{ __('Forgot your password?') }}
             </a>
             @endif
-
-            <x-primary-button class="ml-3">
-                {{ __('Log in') }}
-            </x-primary-button>
         </div>
     </form>
 </x-guest-layout>

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('verified')->default(0);
             $table->integer('user_ref_id')->default(0);
+            $table->char('status')->default('I');
             // $table->string('file_name')->nullable();
             // $table->string('file_path')->nullable();
             $table->rememberToken();

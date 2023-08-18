@@ -125,7 +125,28 @@
                             <x-input-error class="mt-2" :messages="$errors->get('rack')" />
                         </div>
 
-                        <div>
+                        <div class="flex flex-col">
+                            <div class="flex flex-col items-end">
+                                <!-- Flex direction set to column and items to end for labels to appear in front -->
+                                <div class="mb-1">
+                                    <x-input-label for="organization" :value="__('Approximate Visit Date & Time')"
+                                        class="text-gray-700" />
+                                </div>
+
+                                <div class="flex space-x-2 items-center">
+                                    <label for="visitFrom" class="text-gray-600">From </label>
+                                    <input id="visitFrom" name="visitFrom" type="text" class="datetime form-control"
+                                        required autofocus autocomplete="visitFrom" />
+                                    <div></div>
+
+                                    <label for="visitTo" class="text-gray-600">To</label>
+                                    <input id="visitTo" name="visitTo" type="text"
+                                        class="datetime form-control w-full border border-gray-700" required autofocus
+                                        autocomplete="visitTo" />
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <div>
                             <x-input-label for="visitFrom" :value="__('Vist From Date')" />
                             <input id="visitFrom" name="visitFrom" type="text"
                                 class=" datetime form-control mt-1 block w-full" required autofocus
@@ -139,7 +160,7 @@
                                 class=" datetime form-control mt-1 block w-full" required autofocus
                                 autocomplete="visitTo" />
                             <x-input-error class="mt-2" :messages="$errors->get('visitTo')" />
-                        </div>
+                        </div> --}}
 
                         <div>
                             <x-input-label for="reason" :value="__('Purpose of Visit')" />

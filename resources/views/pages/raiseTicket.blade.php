@@ -83,7 +83,7 @@
                             <x-input-error class="mt-2" :messages="$errors->get('reason')" />
                         </div> --}}
                         <div>
-                            <x-input-label for="ticketName" :value="__('Ticket Name')" />
+                            <x-input-label for="ticketName" :value="__('Ticket Title')" />
                             <x-text-input id="ticketName" name="ticketName" type="text" class="mt-1 block w-full"
                                 required autofocus autocomplete="ticketName" />
                             <x-input-error class="mt-2" :messages="$errors->get('ticketName')" />
@@ -97,7 +97,7 @@
                         </div>
 
                         <div class="flex items-center gap-4">
-                            <x-primary-button>{{ __('Save') }}</x-primary-button>
+                            <x-primary-button>{{ __('Submit') }}</x-primary-button>
                         </div>
                     </form>
 

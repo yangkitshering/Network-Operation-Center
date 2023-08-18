@@ -32,10 +32,10 @@
                                     <th>UID</th>
                                     <th>Name</th>
                                     <th>Organization</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
+                                    <th>Email Address</th>
+                                    {{-- <th>Role</th> --}}
                                     <th>Approved</th>
-                                    <th></th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
@@ -47,13 +47,13 @@
                                     <td>{{$user->name}}</td>
                                     <td>{{$user->org_name}}</td>
                                     <td>{{$user->email}}</td>
-                                    <td>
+                                    {{-- <td>
                                         @if($user->role == 'admin')
                                         {{ 'Admin' }}
                                         @else
                                         {{ 'User' }}
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td>
                                         @if($user->verified == 0)
                                         {{ 'No' }}
@@ -62,29 +62,36 @@
                                         @endif
                                     </td>
 
-                                    @if(Auth::user()->hasRole('admin'))
                                     <td>
+                                        @if(Auth::user()->hasRole('admin'))
                                         @if ($user->id == auth()->user()->id)
                                         <p>Current Admin</p>
                                         @else
                                         <form action="manage_users/{{ $user->id }}" method="post">
+
                                             <a href="manage_users/{{ $user->id }}" class="btn btn-success btn-sm">
                                                 <i class="far fa-edit"></i>
                                                 Edit</a>
 
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1">
+                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1" name="flag" value="1">
                                                 <i class="far fa-trash-alt"></i>
                                                 Delete</button>
 
-                                                {{-- <a href="view-user/{{ $user->id }}" class="btn btn-info btn-sm">
-                                                    <i class="far fa-edit"></i>
-                                                    &#x1F441;View</a>      --}}
+                                        </form>
+                                        @endif
+                                        @else
+                                        <form action="manage_users/{{ $user->id }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1" name="flag" value="2">
+                                                <i class="far fa-trash-alt"></i>
+                                                Delete</button>
                                         </form>
                                         @endif
                                     </td>
-                                    @endif
+
                                 </tr>
                                 @endforeach
 

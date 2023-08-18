@@ -15,13 +15,15 @@ class UserApprovalNotify extends Mailable
     use Queueable, SerializesModels;
     public $mail_data;
     public $pdf;
+    public $status;
     /**
      * Create a new message instance.
      */
-    public function __construct($mail_data, $pdf)
+    public function __construct($mail_data, $pdf, $status)
     {
         $this->mail_data = $mail_data;
         $this->pdf = $pdf;
+        $this->status = $status;
     }
 
     /**
@@ -52,8 +54,14 @@ class UserApprovalNotify extends Mailable
      */
     public function attachments(): array
     {
-        return [
-            Attachment::fromStorage($this->pdf),
-        ];
+        if($this->status == 1){
+            return [
+                Attachment::fromStorage($this->pdf),
+            ];
+        }  else{
+            return [
+                
+            ];
+        }
     }
 }

@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->intended(RouteServiceProvider::HOME);
             }else{
                 auth()->logout();
-                return redirect()->route('login')->with('message', "Your account needs an administrator approval in order to login.");
+                return redirect()->route('login')->with('message', "Your account needs an administrator approval in order to login. Please contact nnoc@bt.bt");
             }
         }
 

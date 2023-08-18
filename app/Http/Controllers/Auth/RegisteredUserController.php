@@ -16,6 +16,8 @@ use Mail;
 use App\Mail\UserApproval;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Organization;
+use Illuminate\Support\Facades\DB;
+use App\Models\UserAdd;
 
 class RegisteredUserController extends Controller
 {
@@ -94,7 +96,21 @@ class RegisteredUserController extends Controller
             'contact' => $request->contact,
             'verified' => 0,
             'user_ref_id' => 0,
+            'status' => 'I',
             'password' => Hash::make($request->password),
+        ]);
+
+        //save to add_user table
+        UserAdd::create([
+            'name' => $request->name,
+            'cid' => $request->cid,
+            'organization' => $request->organization,
+            'email' => $request->email,
+            'contact' => $request->contact,
+            'verified' => 0,
+            'user_id' => $user->id,
+            'user_ref_id' => 0,
+            'status' => 'I',
         ]);
 
          // Attach CID photos to the user if any were uploaded
@@ -111,16 +127,22 @@ class RegisteredUserController extends Controller
 
         // Auth::login($user);
         // return redirect(RouteServiceProvider::HOME);
-
+        $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
         $mail_data = [
             'title'=> 'Dear Sir/Madam,',
-            'body'=> 'New user has registered'
+            'body'=> 'This is to your notice that a new user has registered and needs your approval. Please refer below for more detail',
+            'name' => $request->name,
+            'cid' => $request->cid,
+            'organization' => $org_name,
+            'email' => $request->email,
+            'contact' => $request->contact,
+
         ];
 
         Mail::to('sonam.yeshi@bt.bt')
         // ->cc('itservices@bt.bt')
         ->send(new UserApproval($mail_data));
 
-        return redirect()->route('login')->with('message', "Your registration has been submitted successfully for approval.");
+        return redirect()->route('login')->with('message', "Your registration has been submitted successfully for approval. Please contact nnoc@bt.bt.");
     }
 }

@@ -11,7 +11,9 @@
 <body>
     <h4>{{ $mail_data['title'] }}</h4>
     <p> &nbsp;{{ $mail_data['body'] }}</p>
+    @if($status == 1)
     <p> &nbsp;{{ 'Note*: Please produce your approval note during the time of your visit.' }}</p>
+    @endif
     <br>
 
 </body>

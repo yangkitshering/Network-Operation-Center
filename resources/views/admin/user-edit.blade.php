@@ -26,21 +26,21 @@
                         <div>
                             <x-input-label for="name" :value="__('Name')" />
                             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" required autofocus
-                                autocomplete="name" value="{{ $user->name }}" readonly />
+                                autocomplete="name" value="{{ $user->name }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                         </div>
 
                         <div>
                             <x-input-label for="cid" :value="__('CID')" />
                             <x-text-input id="cid" name="cid" type="text" class="mt-1 block w-full" required autofocus
-                                autocomplete="cid" value="{{ $user->cid }}" readonly />
+                                autocomplete="cid" value="{{ $user->cid }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('cid')" />
                         </div>
 
                         <div>
                             <x-input-label for="email" :value="__('Email')" />
                             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" required
-                                autocomplete="username" value="{{ $user->email }}" readonly />
+                                autocomplete="username" value="{{ $user->email }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
                         </div>
@@ -48,7 +48,7 @@
                         <div>
                             <x-input-label for="contact" :value="__('Contact')" />
                             <x-text-input id="contact" name="contact" type="text" class="mt-1 block w-full" required
-                                autofocus autocomplete="contact" value="{{ $user->contact }}" readonly />
+                                autofocus autocomplete="contact" value="{{ $user->contact }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('contact')" />
                         </div>
 
@@ -61,13 +61,10 @@
                                     $organization->id ? 'selected' : '' }}>{{ $organization->org_name}}</option>
                                 @endforeach
                             </select>
-                            {{--
-                            <x-text-input id="organization" name="organization" type="text" class="mt-1 block w-full "
-                                required autofocus autocomplete="organization" value="{{ $user->organization }}" /> --}}
                             <x-input-error class="mt-2" :messages="$errors->get('organization')" />
                         </div>
 
-
+                        <br>
                         <div>
                             <label for="role" class="col-md-1 col-form-label text-md-right">{{ __('Role')
                                 }}</label>
@@ -81,7 +78,7 @@
                             @endif> Admin
                         </div>
 
-                        <div>
+                        {{-- <div>
                             <label for="role" class="col-md-1 col-form-label text-md-right">{{ __('Approve')
                                 }}</label>
                             &nbsp;&nbsp;&nbsp;
@@ -89,20 +86,18 @@
                             1)
                             checked
                             @endif>
-                        </div>
+                        </div> --}}
 
                         {{-- <img src="{{ asset('storage/'. $user->path) }}" height="100" width="100" alt="User Image">
                         --}}
 
 
-                        <table>
+                        {{-- <table>
                             @foreach($cid_files as $file)
                             <tr>
                                 @if(substr($file->path, strpos($file->path, '.')+1) == 'pdf')
                                 <td>
                                     <a href="{{ asset('storage/'. $file->path) }}" target="_blank">
-                                        {{-- <input type="text"
-                                            value="{{substr($file->path, strpos($file->path, '.')+1)}}" /> --}}
                                         View Attach File
                                     </a>
                                     @else
@@ -113,14 +108,16 @@
                                 </td>
                             </tr>
                             @endforeach
-                        </table>
+                        </table> --}}
 
                         <hr>
 
                         <div class="flex items-center gap-4">
-                            <x-primary-button>{{ __('Submit') }}</x-primary-button>
+                            <x-primary-button name="flag" value="1">{{ __('Edit') }}</x-primary-button>
+                            {{-- <x-primary-button name="flag" value="0">{{ __('Reject') }}</x-primary-button> --}}
                         </div>
                     </form>
+
 
                     @if (session('success'))
                     <script>

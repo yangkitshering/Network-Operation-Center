@@ -12,6 +12,21 @@
 
                     <link rel="stylesheet" href="{{ asset('css/card.css') }}">
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <style>
+                        .card-body table {
+                            border-collapse: collapse;
+                        }
+
+                        .card-body th, .card-body td {
+                            border: none;
+                            padding: 0.5rem;
+                        }
+
+                        .card-body th {
+                            text-align: left;
+                            font-weight: bold;
+                        }
+                    </style>
 
                     <div class="card">
                         <div class="card-header">User Request Details</div>
@@ -49,14 +64,19 @@
                                     <th>Purpose of Visit</th>
                                     <td>{{ $requests->reason }}</td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <th>Visit From</th>
                                     <td>{{ $requests->visitFrom }}</td>
                                 </tr>
                                 <tr>
                                     <th>Visit To</th>
                                     <td>{{ $requests->visitTo }}</td>
-                                </tr>
+                                </tr> --}}
+                                <tr>
+                                    <th>Approximate Date & Time</th>
+                                    <td class="pr-1">{{ $requests->visitTo }}</td>
+                                    <td>{{ $requests->visitFrom }}</td>
+                                </tr>
                                 <tr>
                                     <th>Status</th>
                                     @if($requests->status == 'I')
@@ -67,17 +87,18 @@
                                     <td>{{'Rejected'}}</td>
                                     @endif
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <th>Exited</th>
                                     @if($requests->exited == 0)
                                     <td>{{'No'}}</td>
                                     @else
                                     <td>{{'Yes'}}</td>
                                     @endif
-                                </tr>
+                                </tr> --}}
+                                @if(Auth::user()->hasRole('admin'))
                                 @if($requests->status == 'I')
                                 <tr>
-                                    <th></th>
+                                    <th>Action</th>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <form id="approve-form" method="POST"
@@ -99,6 +120,7 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @endif
                                 @endif
                             </table>
 

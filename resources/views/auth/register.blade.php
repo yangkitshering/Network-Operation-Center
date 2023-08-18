@@ -12,10 +12,10 @@
         </div>
 
         <!-- CID -->
-        <div>
+        <div class="mt-4">
             <x-input-label for="cid" :value="__('CID')" />
             <x-text-input id="cid" class="block mt-1 w-full" type="text" name="cid" :value="old('cid')" required
-                autofocus autocomplete="cid" length="11" />
+                autofocus autocomplete="cid" maxlength="11" />
             <x-input-error :messages="$errors->get('cid')" class="mt-2" />
         </div>
 
@@ -48,7 +48,7 @@
         <!-- Mobile number -->
         <div class="mt-4">
             <x-input-label for="contact" :value="__('Mobile Number')" />
-            <x-text-input id="contact" class="block mt-1 w-full" type="text" name="contact" :value="old('contact')"
+            <x-text-input id="contact" class="block mt-1 w-full" type="number" name="contact" :value="old('contact')"
                 required autofocus autocomplete="contact" />
             <x-input-error :messages="$errors->get('contact')" class="mt-2" />
         </div>
@@ -76,7 +76,8 @@
         <!-- Multiple CID photos -->
         <div class="mt-4">
             <x-input-label for="files" :value="__('Upload CID')" />
-            <input id="files" name="files[]" type="file" class="mt-1 block w-full" accept=".jpg, .jpeg, .png, .pdf" required multiple />
+            <input id="files" name="files[]" type="file" class="mt-1 block w-full" accept=".jpg, .jpeg, .png, .pdf"
+                required multiple />
             <x-input-error class="mt-2" :messages="$errors->get('files.*')" />
         </div>
 
@@ -89,14 +90,14 @@
         </div> --}}
 
         <div class="flex items-center justify-end mt-4">
+            <x-primary-button class="ml-4">
+                {{ __('Register') }}
+            </x-primary-button>
+            &nbsp;
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="/">
                 {{ __('Already registered?') }}
             </a>
-
-            <x-primary-button class="ml-4">
-                {{ __('Submit') }}
-            </x-primary-button>
         </div>
     </form>
 </x-guest-layout>

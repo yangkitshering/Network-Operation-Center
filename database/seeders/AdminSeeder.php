@@ -23,6 +23,7 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'verified' => 1,
             'user_ref_id' => 0,
+            'status' => 'A'
             // 'file_name' => null,
             // 'file_path' => null
         ]);

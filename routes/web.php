@@ -38,7 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
     Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
 
-    Route::get('/view-user/{id}', [AdminController::class, 'view_user']);
+    // Route::get('/view-user/{id}', [AdminController::class, 'view_user']);
 });
 
 // routes only for authenticated role (user)
@@ -58,6 +58,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
     Route::get('/ticketList', [AdminController::class, 'displayTicket'])->name('showTickets');
     Route::get('/ticketView/{id}', [AdminController::class, 'viewTicket']);
     Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close');
+
+    Route::get('/user_pending', [AdminController::class, 'pending_user'])->name('user-pending');
+    Route::get('/user_pending/{id}', [AdminController::class, 'view_user'])->name('user-view');
+    Route::post('user_pending/{id}', [AdminController::class, 'user_approve_reject'])->name('user-approval-reject');
+    Route::put('user_action/{id}', [AdminController::class, 'user_approve_reject'])->name('user-action');
+    
+    
 
     // Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
     // Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);

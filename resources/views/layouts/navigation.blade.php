@@ -13,14 +13,51 @@
             </div>
 
             <!-- Navigation Links -->
+
             <div class="space-x-8 sm:-my-px sm:ml-12 sm:flex">
+                @if(Auth::user()->hasRole('user'))
                 <x-nav-link :href="route('registration')" :active="request()->routeIs('registration')">
-                    {{ __('Make Request') }}
+                    {{ __('Make Access Request') }}
                 </x-nav-link>
+                @endif
+
+                <!-- Dropdown for pendings -->
                 @if (Auth::user()->hasRole('admin'))
-                <x-nav-link :href="route('pendingList')" :active="request()->routeIs('/pendingList')">
+                <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <x-dropdown>
+                        <x-slot name="trigger">
+                            <button
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                <div :active="request()->routeIs('registration')" >Pending Request</div>
+                                <div class="ml-1">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            @if(Auth::user()->hasRole('admin'))
+                            <x-dropdown-link :href="route('pendingList')">
+                                {{ __('Access Request') }}
+                            </x-dropdown-link>
+                            @endif
+
+                            <x-dropdown-link :href="route('user-pending')">
+                                {{ __('Registration Request') }}
+                            </x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
+                </div>
+                @endif
+                @if (Auth::user()->hasRole('admin'))
+                {{-- <x-nav-link :href="route('pendingList')" :active="request()->routeIs('/pendingList')">
                     {{ __('Pending Request') }}
-                </x-nav-link>
+                </x-nav-link> --}}
 
                 <x-nav-link :href="route('approvedList')" :active="request()->routeIs('/approvedList')">
                     {{ __('Approved/Rejected Request') }}
@@ -32,17 +69,17 @@
                 @endif
                 @if (Auth::user()->hasRole('user'))
                 <x-nav-link :href="route('ticket')" :active="request()->routeIs('/ticket')">
-                    {{ __('Raise Your Ticket') }}
+                    {{ __('Raise Ticket') }}
                 </x-nav-link>
                 <x-nav-link :href="route('user_request')" :active="request()->routeIs('/user_request')">
-                    {{ __('My Request') }}
+                    {{ __('View Access Request') }}
                 </x-nav-link>
                 @endif
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
-                <x-dropdown align="right" width="48">
+                <x-dropdown allign="right" width="48">
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -60,14 +97,14 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        @if(Auth::user()->hasRole('admin'))
+                        {{-- @if(Auth::user()->hasRole('admin'))
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
-                        @endif
+                        @endif --}}
 
                         <x-dropdown-link :href="route('manage-user')">
-                            {{ __('Manage User') }}
+                            {{ __('User Management') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->

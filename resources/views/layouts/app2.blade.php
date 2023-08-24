@@ -71,7 +71,7 @@
             <div class="row content-justify-between">
                 <div class="col-md-8 col-12 text-center text-lg-left text-md-left">
                     <p class="copyright">Copyright © Bhutan Telecom Limited
-                        <?php echo date("Y"); ?>.<br>
+                        <?php echo date("Y"); ?>. Contact us @nnoc@bt.bt<br>
                     </p>
                 </div>
 

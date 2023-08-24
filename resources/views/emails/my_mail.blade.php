@@ -15,13 +15,15 @@
     <br>
 
     <div class="details">
-        <h3>&nbsp;Access Details as Follows:</h3>
+        {{-- <h3>&nbsp;Access Details as Follows:</h3> --}}
         <p>&nbsp;<strong>Name:</strong>{{$mail_data['name']}}</p>
-        <p>&nbsp;<strong>CID:</strong>{{$mail_data['cid']}}</p>
-        <p>&nbsp;<strong>Organization:</strong>{{$mail_data['org']}}</p>
+        <p>&nbsp;<strong>CID Number:</strong>{{$mail_data['cid']}}</p>
+        <p>&nbsp;<strong>Client Organization:</strong>{{$mail_data['org']}}</p>
         <p>&nbsp;<strong>Purpose:</strong>{{$mail_data['purpose']}}</p>
-        <p>&nbsp;<strong>Visit From:</strong>{{$mail_data['from']}}</p>
-        <p>&nbsp;<strong>Visit To:</strong>{{$mail_data['to']}}</p>
+        <p>&nbsp;<strong>Approximate Date & Time:  From:</strong>{{$mail_data['from']}} 
+            <strong>To:</strong>{{$mail_data['to']}} </p>
+        {{-- <p>&nbsp;<strong>Visit From:</strong>{{$mail_data['from']}}</p> --}}
+        {{-- <p>&nbsp;<strong>Visit To:</strong>{{$mail_data['to']}}</p> --}}
     </div>
 
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{{ route('approval.process') }}" target="_blank"

@@ -28,6 +28,8 @@ use App\Mail\UserApprovalNotify;
 use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\UserAdd;
+use Illuminate\Support\Facades\Http;
+use App\Models\Visitor;
 
 class AdminController extends Controller
 {
@@ -114,48 +116,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Admin Approve/Reject/view the request
-     */
-    public function processRequest($id, Request $request)
-    {
-        $approval = Registration::where('id', $id)->first();
-        $mail_data = [
-            'title'=> 'Hello '.$approval->name. ',',
-            'body'=> ''
-        ];
-
-        if($request->flag == 1){
-           //Approve
-           $mail_data['body'] = 'Your access request has been approved.';
-           $approval->status = 'A';
-           $msg = 'Request has been Approved';
-           $approval->save();  
-        }else{
-            //Reject
-            $mail_data['body'] = 'Your access request has been rejected.
-                                  Kindly make your request next time.';
-            $approval->status = 'R';
-            $msg = 'Request has been Rejected';
-            $approval->save(); 
-        }
-
-            $org_name = DB::table('organizations')->where('id', $approval->organization)->value('org_name');
-            $pdf= Pdf::loadView('pages.e_reg_card', compact('approval', 'org_name'));
-            $pdfFileName = 'eRegistration_' . $approval->name . '_' . time() . '.pdf'; // Generate a unique name
-            $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
-            $eReg_Card_path = '/public/'.$pdfFileName;
-
-            $notify_email = $approval->email;
-            $status = $approval->status;
-            Mail::to($notify_email)->send(new Notify($mail_data, $eReg_Card_path, $status, $id));
-
-            Session::flash('success', $msg);
-           // return redirect('dashboard');
-        return redirect()->back();
-    }
-
-    /**
-     * Renders admin request registration page.
+     * Renders access request registration page.
      */
     public function register()
     {
@@ -176,27 +137,62 @@ class AdminController extends Controller
         ->where('organizations.id', '=', Auth::user()->organization)
         ->get();
 
-        return view('pages.register', compact('rack_lists','organizations','dc_lists'));
+        $add_users = DB::table('user_adds')
+        ->select('user_adds.*')
+        ->where('user_adds.status', '=', 'A')
+        ->where('user_adds.user_ref_id', '=', Auth::user()->id)
+        ->get();
+
+        return view('pages.register', compact('rack_lists','organizations','dc_lists', 'add_users'));
     }
 
     /**
-     * Save the request access registration.
+     *  method to Save the access request registration.
      */
     public function save(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'passport_photos' => 'required|array', // Make sure to adjust the field name
+            'passport_photos.*' => 'required|image|mimes:jpg,jpeg,png|max:2048', // Adjust max file size and allowed image formats
+
         ]);
-        $input = $request->all();
+
+        $filePaths = [];
+        foreach ($request->file('passport_photos') as $file) {
+            $filename = time() . '_' . $file->getClientOriginalName(); // Adjust the filename as needed
+            $filePath = $file->storeAs('passport', $filename, 'public'); // Files will be stored in the "public/passport" directory
+            $filePaths[] = $filePath;
+        }
+
+        $input = $request->except('passport_photos'); // Remove passport_photos from the input
+        $input['passport_path'] = implode(',', $filePaths); // Convert array to comma-separated string
+        // $input = $request->all();
         $input['exited'] = false;
         $input['status'] = 'I';
+
         $res = Registration::create($input);
 
-        $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
+        //to save additional visitors
+        foreach($request->users as $id){
+            $detail = UserAdd::find($id);
+            visitor::create([
+                'name' => $detail->name,
+                'cid' => $detail->cid,
+                'client_org' => $detail->client_org,
+                'organization' => $detail->organization,
+                'email' => $detail->email,
+                'contact' => $detail->contact,
+                'user_add_id' => $detail->id,
+                'user_ref_id' => $detail->user_ref_id,
+                'reg_id' => $res->id
+            ]);
+        }
 
+        $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
         $mail_data = [
             'title'=> 'Dear Sir/Madam,',
-            'body'=> 'This is to notify that a new access request has been registered and needs your approval.',
+            'body'=> 'The below user has submitted access request for your approval.',
             'name'=> $request->name,
             'cid'=> $request->cid,
             'org'=> $org_name,
@@ -208,12 +204,94 @@ class AdminController extends Controller
         Mail::to('sonam.yeshi@bt.bt')
         ->cc('itservices@bt.bt')
         ->send(new ApprovalRequest($mail_data));
+
+        //SMS
+        $sms = 'Your access request has been submitted for approval. For more please contact nnoc@bt.bt or 17171717';
+        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+        $user = "tester";
+        $pass = "foobar";
+        $text = $sms;
+        $to = "975". $request->contact;
+        Http::get($kannelApiUrl, [
+            'user' => $user,
+            'pass' => $pass,
+            'text' => $text,
+            'to' => $to,
+        ]);
         
         Session::flash('success', 'Request submitted successfully.');
         return redirect()->back();
     }
 
-    
+    /**
+     * Admin Approve/Reject/view the request
+     */
+    public function processRequest($id, Request $request)
+    {
+        $mail_data = [
+            'title'=> '',
+            'body'=> ''
+        ];
+
+        if($request->flag == 1){
+           //Approve
+           $approval = Registration::where('id', $id)->first();
+           $name = $approval->name;
+           $mail_data['body'] = 'Your access request is approved. Please refer details in the attached document.';
+           $approval->status = 'A';
+           $msg = 'Access request has been Approved';
+           $sms = 'Your access request has been approved. For more please contact nnoc@bt.bt or 17171717';
+           $approval->save();  
+           $title = 'Approved';
+
+           $additional_user = DB::table('visitors')
+           ->select('visitors.*')
+           ->where('visitors.reg_id', '=', $approval->id)
+           ->get();
+           //PDF file part
+           $org_name = DB::table('organizations')->where('id', $approval->organization)->value('org_name');
+           $pdf= Pdf::loadView('pages.e_reg_card', compact('approval', 'org_name','additional_user'));
+           $pdfFileName = 'eRegistration_' . $approval->name . '_' . time() . '.pdf'; // Generate a unique name
+           $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
+
+        }else{
+            //Reject
+            $approval = Registration::where('id', $request->reg_id)->first();
+            $name = $approval->name;
+            $mail_data['body'] = 'Your access request is rejected due to '.$approval->reason.'.' .' Please submit access request again.';
+            $approval->status = 'R';
+            $msg = 'Access request has been Rejected';
+            $sms = 'Your access request has been rejected. For more please contact nnoc@bt.bt or 17171717';
+            $approval->save(); 
+            $title = 'Rejected';
+
+            $pdfFileName = '';
+        }
+            $mail_data['title'] = 'Hello '.$name. ',';
+            $eReg_Card_path = '/public/'.$pdfFileName;
+            
+
+            $notify_email = $approval->email;
+            $status = $approval->status;
+            Mail::to($notify_email)->send(new Notify($mail_data, $eReg_Card_path, $status, $id));
+
+            //SMS
+            $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+            $user = "tester";
+            $pass = "foobar";
+            $text = $sms;
+            $to = "975". $approval->contact;
+            Http::get($kannelApiUrl, [
+                'user' => $user,
+                'pass' => $pass,
+                'text' => $text,
+                'to' => $to,
+            ]);
+
+            Session::flash('success', $msg);
+           // return redirect('dashboard');
+        return redirect()->back()->with('title', $title);
+    }
 
     /**
      * load user manage page.
@@ -231,7 +309,7 @@ class AdminController extends Controller
             ->get();
         }else{
             $users = DB::table('user_adds as u')
-            ->join('organizations', 'u.organization', '=', 'organizations.id')
+            ->join('organizations', 'u.client_org', '=', 'organizations.id')
             // ->join('role_user', 'u.id', '=', 'role_user.user_id')
             // ->join('roles', 'role_user.role_id', '=', 'roles.id')
             ->select('u.*', 'organizations.org_name')
@@ -320,12 +398,12 @@ class AdminController extends Controller
         'organization' => 'required',
         'contact' => ['required', 'max:8'],
         'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        // 'password' => ['required', 'confirmed', Rules\Password::defaults()],
         'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Adjust max file size as needed
         ],
         [
-        'password.required' => 'The password field is required.',
-        'password.confirmed' => 'The password confirmation does not match.',
+        // 'password.required' => 'The password field is required.',
+        // 'password.confirmed' => 'The password confirmation does not match.',
         'email.regex' => 'The email address format is invalid.',
         'files.*.required' => 'The CID photo is required.',
         'files.*.mimes' => 'The CID photo must be a valid image or PDF file.',
@@ -349,7 +427,7 @@ class AdminController extends Controller
         $user = User::create([
             'name' => $request->name,
             'cid' => $request->cid,
-            'organization' => $request->organization,
+            'organization' => $request->client_org,
             'email' => $request->email,
             'contact' => $request->contact,
             'verified' => 0,
@@ -359,9 +437,10 @@ class AdminController extends Controller
         ]);
 
         //save to new add user table
-        UserAdd::create([
+        $add_user = UserAdd::create([
             'name' => $request->name,
             'cid' => $request->cid,
+            'client_org' => $request->client_org,
             'organization' => $request->organization,
             'email' => $request->email,
             'contact' => $request->contact,
@@ -378,7 +457,7 @@ class AdminController extends Controller
             }, $filePaths));
         }
 
-        $user->attachRole('user'); // Assuming default role is 'user'
+        // $user->attachRole('user'); // Assuming default role is 'user'
 
         $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
         $mail_data = [
@@ -394,6 +473,20 @@ class AdminController extends Controller
         Mail::to('sonam.yeshi@bt.bt')
         // ->cc('itservices@bt.bt')
         ->send(new UserApproval($mail_data));
+
+        //SMS
+        $sms = 'Your registration has been submitted for approval. For more please contact nnoc@bt.bt or 17171717';
+        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+        $user = "tester";
+        $pass = "foobar";
+        $text = $sms;
+        $to = "975". $request->contact;
+        Http::get($kannelApiUrl, [
+            'user' => $user,
+            'pass' => $pass,
+            'text' => $text,
+            'to' => $to,
+        ]);
 
         Session::flash('success', 'New User added successfully.');
 
@@ -413,50 +506,62 @@ class AdminController extends Controller
             ->get();
 
             $cid_files = DB::table('c_i_d_files')
-                    ->select('c_i_d_files.*')
-                    ->where('c_i_d_files.user_id', '=', $id)
-                    ->get();
+                ->select('c_i_d_files.*')
+                ->where('c_i_d_files.user_id', '=', $id)
+                ->get();
+           
         $user = User::where('id', '=', $id)->get()->first();
 
         return view('admin.user_view', compact('user','cid_files','organizations'));
     }
 
+    //method to approve and reject user request
     public function user_approve_reject($id, Request $request){
 
-        $usr = User::where('id', $id)->first();
-
         $mail_data = [
-            'title'=> 'Hello '.$usr->name. ',',
+            'title'=> '',
             'body'=> ''
         ];
-
         if($request->flag == 1){
             //Approve
-            $mail_data['body'] = 'Your user registration request has been approved by the administrator.';
+            $usr = User::where('id', $id)->first();
+            $name = $usr->name;
+            $mail_data['body'] = 'Your registration request is approved.';
             $usr->verified = 1;
-            $usr->status = 'A';
-            $msg = 'New user approved successfully.';
-            $usr->save();  
+            $msg = 'New user approved successfully.'; 
 
+            if($usr->user_ref_id != 0){
+                $usr->status = 'N';
             //change status to verified to add user table
             DB::table('user_adds')
                 ->where('user_id', $id)
                 ->update(['verified' => true,
                            'status' => 'A' 
                         ]);
+            }else{
+                $usr->status = 'A';
+            }
+            $usr->save(); 
+
+            $title = 'Approved';
+            $sms = 'Your registration has been approved. For more please contact nnoc@bt.bt or 17171717';
          }else{
              //Reject
-             $mail_data['body'] = 'Your user registration request has been rejected by the administrator.';
-             $usr->verified = 0;
-             $usr->status = 'R';
-             $msg = 'New user request has been Rejected';
-             $usr->save(); 
-
-             //change status to verified to add user table
+            $usr = User::where('id', $request->user_id)->first();
+            $name = $usr->name;
+            $mail_data['body'] = 'Your registration request is rejected due to '. $request->rejectReason .'.'. ' Please submit registration request again.';
+            $msg = 'New user request has been Rejected';
+            //  $usr->save(); 
+            if($usr->user_ref_id != 0){
+            //change status to verified to add user table
             DB::table('user_adds')
-            ->where('user_id', $id)
+            ->where('user_id', $usr->id)
             ->update(['verified' => false,
-        'status' => 'R']);
+                      'status' => 'R']);
+            }
+            $title = 'Rejected';
+            $sms = 'Your registration has been rejected due to '. $request->rejectReason.'.'. 'For more please contact nnoc@bt.bt or 17171717';
+            // DB::table('users')->where('id', $id)->delete();
          }
 
             $org_name = DB::table('organizations')->where('id', $usr->organization)->value('org_name');
@@ -468,13 +573,28 @@ class AdminController extends Controller
             $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
             $eCard_path = '/public/'.$pdfFileName;
 
+            $mail_data['title'] = 'Hello '.$name. ',';
             $status = $usr->verified;
             Mail::to($usr->email)
-            ->send(new UserApprovalNotify($mail_data, $eCard_path, $status));
+            ->send(new UserApprovalNotify($mail_data, $status));
+
+            //SMS
+            
+            $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+            $user = "tester";
+            $pass = "foobar";
+            $text = $sms;
+            $to = "975". $usr->contact;
+            Http::get($kannelApiUrl, [
+                'user' => $user,
+                'pass' => $pass,
+                'text' => $text,
+                'to' => $to,
+            ]);
 
             Session::flash('success', $msg);
 
-        return redirect()->back();
+        return redirect()->back()->with('title', $title);
 
     }
 
@@ -512,7 +632,11 @@ class AdminController extends Controller
      */
     public function displayTicket()
     {
-        $tickets = Ticket::all();
+        // $tickets = Ticket::all();
+        $tickets = DB::table('tickets')
+        ->join('organizations', 'organizations.id', '=', 'tickets.organization')
+        ->select('tickets.*', 'org_name')
+        ->get();
         return view('pages.displayTicket', compact('tickets'));
     }
 
@@ -521,7 +645,12 @@ class AdminController extends Controller
      */
     public function viewTicket($id)
     {
-        $ticket = Ticket::where('id', '=', $id)->get()->first();
+        // $ticket = Ticket::where('id', '=', $id)->get()->first();
+        $ticket = DB::table('tickets')
+        ->join('organizations', 'organizations.id', '=', 'tickets.organization')
+        ->select('tickets.*', 'org_name')
+        ->where('tickets.id', '=', $id)
+        ->get()->first();
         return view('pages.viewTicket', compact('ticket'));
     }
 
@@ -536,4 +665,75 @@ class AdminController extends Controller
 
         return redirect('ticketList');
     }
+
+    public function exit_now($id){
+        DB::table('registrations')
+        ->where('id', $id)
+        ->update(['exited' => true
+    ]);
+    Session::flash('success', 'Thank you for the exit.');
+    return redirect()->back();
+
+    }
+
+    // //method to approve and reject user request
+    // public function user_reject($id, Request $request){
+
+    //     // dd($request->user_id);
+    //     $usr = User::where('id', $request->user_id)->first();
+
+    //     $mail_data = [
+    //         'title'=> 'Hello '.$usr->name. ',',
+    //         'body'=> ''
+    //     ];
+    //          //Reject
+    //          $mail_data['body'] = 'Your user registration request is rejected due to '. $request->rejectReason .'.' .' Please submit registration request again.';
+    //         //  $usr->verified = 0;
+    //         //  $usr->status = 'R';
+    //          $msg = 'New user request has been Rejected';
+    //         //  $usr->save(); 
+
+    //          //change status to verified to add user table
+    //         DB::table('user_adds')
+    //         ->where('user_id', $request->user_id)
+    //         ->update(['verified' => false,
+    //                   'status' => 'R']);
+
+    //         $title = 'Rejected';
+    //         $sms = 'Your registration has been rejected due to '. $request->rejectReason.'.'. 'For more please contact nnoc@bt.bt or 17171717';
+    //         // DB::table('users')->where('id', $id)->delete();
+         
+
+    //         // $org_name = DB::table('organizations')->where('id', $usr->organization)->value('org_name');
+    //         // $file_path = DB::table('c_i_d_files')->where('user_id', $usr->id)->value('path');
+    //         // Generate the PDF
+    //         // $pdf= Pdf::loadView('pages.eCard', compact('usr', 'org_name', 'file_path'));
+    //         // Save the PDF to storage
+    //         // $pdfFileName = 'eCard_' . $usr->name . '_' . time() . '.pdf'; // Generate a unique name
+    //         // $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
+    //         // $eCard_path = '/public/'.$pdfFileName;
+
+    //         $status = $usr->verified;
+    //         Mail::to($usr->email)
+    //         ->send(new UserApprovalNotify($mail_data));
+
+    //         //SMS
+            
+    //         $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+    //         $user = "tester";
+    //         $pass = "foobar";
+    //         $text = $sms;
+    //         $to = "975". $usr->contact;
+    //         Http::get($kannelApiUrl, [
+    //             'user' => $user,
+    //             'pass' => $pass,
+    //             'text' => $text,
+    //             'to' => $to,
+    //         ]);
+
+    //         Session::flash('success', $msg);
+
+    //     return redirect()->back()->with('title', $title);
+
+    // }
 }

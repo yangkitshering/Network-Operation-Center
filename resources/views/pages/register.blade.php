@@ -55,7 +55,8 @@
 
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                    <form method="post" action="{{ route('save') }}" class="mt-6 space-y-6">
+                    <form method="post" action="{{ route('save') }}" class="mt-6 space-y-6"
+                        enctype="multipart/form-data">
                         @csrf
                         <div>
                             {{--
@@ -146,27 +147,29 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- <div>
-                            <x-input-label for="visitFrom" :value="__('Vist From Date')" />
-                            <input id="visitFrom" name="visitFrom" type="text"
-                                class=" datetime form-control mt-1 block w-full" required autofocus
-                                autocomplete="visitFrom" />
-                            <x-input-error class="mt-2" :messages="$errors->get('visitFrom')" />
+                        {{-- Addtional users --}}
+                        <div class="mt-4">
+                            <x-input-label for="users" :value="__('Additional users')" />
+                            <select id="users" class="js-example-basic-multiple block mt-1 w-full" name="users[]"
+                                required multiple>
+                                @foreach($add_users as $usr)
+                                <option value="{{$usr->id}}">{{$usr->name}}</option>
+                                @endforeach
+                            </select>
                         </div>
-
-                        <div>
-                            <x-input-label for="visitTo" :value="__('Vist To Date')" />
-                            <input id="visitTo" name="visitTo" type="text"
-                                class=" datetime form-control mt-1 block w-full" required autofocus
-                                autocomplete="visitTo" />
-                            <x-input-error class="mt-2" :messages="$errors->get('visitTo')" />
-                        </div> --}}
-
                         <div>
                             <x-input-label for="reason" :value="__('Purpose of Visit')" />
                             <textarea id="reason" name="reason" type="text" class="mt-1 block w-full" required autofocus
                                 autocomplete="reason"></textarea>
                             <x-input-error class="mt-2" :messages="$errors->get('reason')" />
+                        </div>
+
+                        <!-- Multiple passport photos -->
+                        <div class="mt-4">
+                            <x-input-label for="passport_photos" :value="__('Upload Passport Size Photo')" />
+                            <input id="passport_photos" name="passport_photos[]" type="file" class="mt-1 block w-full"
+                                accept=".jpg, .jpeg, .png, .pdf" required multiple />
+                            <x-input-error class="mt-2" :messages="$errors->get('passport_photos.*')"   />
                         </div>
 
                         <div class="flex items-center gap-4">

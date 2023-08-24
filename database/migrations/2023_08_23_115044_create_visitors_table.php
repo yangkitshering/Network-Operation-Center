@@ -11,21 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('registrations', function (Blueprint $table) {
+        Schema::create('visitors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('cid');
+            $table->integer('client_org');
+            $table->string('organization');
             $table->string('email');
             $table->string('contact');
-            $table->integer('dc');
-            $table->integer('organization');
-            $table->integer('rack');
-            $table->string('reason'); 
-            $table->timestamp('visitFrom')->nullable();
-            $table->timestamp('visitTo')->nullable();
-            $table->boolean('exited');
-            $table->char('status');
-            $table->string('passport_path');
+            $table->integer('reg_id');
+            $table->integer('user_add_id');
+            $table->integer('user_ref_id');
             $table->timestamps();
         });
     }
@@ -35,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('registrations');
+        Schema::dropIfExists('visitors');
     }
 };

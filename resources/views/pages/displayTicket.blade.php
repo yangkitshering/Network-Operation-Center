@@ -12,7 +12,7 @@
                     <section>
                         <header>
                             <h2 class="text-lg font-medium text-gray-900 text-center">
-                                {{ __('Tickets Raised') }}
+                                {{ __('Tickets') }}
                             </h2>
 
                             {{-- <p class="mt-1 text-sm text-gray-600">
@@ -39,7 +39,7 @@
                                 <tr>
                                     <td>{{$ticket->ticketName}}</td>
                                     <td>{{$ticket->ticket}}</td>
-                                    <td>{{$ticket->organization}}</td>
+                                    <td>{{$ticket->org_name}}</td>
                                     @if($ticket->status == 0)
                                     <td>{{'Not Closed'}}</td>
                                     @else

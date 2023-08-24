@@ -12,10 +12,14 @@
     <h4>{{ $mail_data['title'] }}</h4>
     <p> &nbsp;{{ $mail_data['body'] }}</p>
     @if($status == 1)
-    <p> &nbsp;{{ 'Note*: Please produce your approval note during the time of your visit.' }}</p>
+    {{-- <p> &nbsp;{{ 'Please produce your approval note during the time of your visit.' }}</p> --}}
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="{{route('approval.process')}}" class="btn btn-info btn-sm" target="_blank">
+        <i class="far fa-edit"></i>
+        &#x2192;Click here to Login</a>
     @endif
     <br>
-
+    <br>
 </body>
 <p> Regards</p>
 <p> Thank you</p>

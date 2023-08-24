@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
             'organization' => 1,
             'email' => 'admin@bt.bt',
             'contact' => '17123410',
-            'password' => Hash::make('12345678'),
+            'password' => Hash::make('admin@123'),
             'verified' => 1,
             'user_ref_id' => 0,
             'status' => 'A'

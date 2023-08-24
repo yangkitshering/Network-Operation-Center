@@ -30,7 +30,7 @@
                                 </tr>
                                 <tr>
                                     <th>Organization</th>
-                                    <td>{{ $ticket->organization }}</td>
+                                    <td>{{ $ticket->org_name }}</td>
                                 </tr>
                                 <tr>
                                     <th>Email</th>

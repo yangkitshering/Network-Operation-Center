@@ -5,23 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Registration extends Model
+class Visitor extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'name',
         'cid',
+        'client_org',
+        'organization',
         'email',
         'contact',
-        'dc',
-        'organization',
-        'rack',
-        'reason',
-        'visitFrom',
-        'visitTo',
-        'exited',
-        'status',
-        'passport_path',
+        'reg_id',
+        'user_add_id',
+        'user_ref_id',
     ];
 }

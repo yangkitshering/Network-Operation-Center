@@ -14,6 +14,14 @@
 
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+                    <!-- jQuery -->
+                    <script src="{{ asset('js/jquery.min.js') }}"></script>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+                        rel="stylesheet">
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js">
+                    </script>
+
+                    @if($user != null)
                     <form method="post" action="/user_pending/{{ $user->id }}" class="mt-6 space-y-6">
                         @csrf
                         <div>
@@ -81,17 +89,23 @@
                         <hr>
 
                         <div class="flex items-center gap-4">
-                            <x-primary-button name="flag" value="1">{{ __('Approve') }}</x-primary-button>
-                            <x-primary-button name="flag" value="0">{{ __('Reject') }}</x-primary-button>
+                            {{-- <x-primary-button name="flag" value="1">{{ __('Approve') }}</x-primary-button> --}}
+                            <button type="submit" class="btn btn-success" name="flag" value="1">Approve</button>
+                            <button type="button" class="btn btn-danger reject-button open_Modal"
+                                value="{{ $user->id }}">Reject</button>
+                            {{-- <x-primary-button name="flag" value="0">{{ __('Reject') }}</x-primary-button> --}}
                         </div>
                     </form>
-
+                    {{-- <div class="flex items-center gap-4">
+                        <x-primary-button name="flag" value="0">{{ __('Reject') }}</x-primary-button>
+                    </div> --}}
+                    @endif
 
                     @if (session('success'))
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                                     Swal.fire({
-                                        title: 'Success',
+                                        title: '{{ session('title') }}',
                                         text: '{{ session('success') }}',
                                         icon: 'success',
                                         confirmButtonText: 'OK'
@@ -108,4 +122,48 @@
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready( function(){
+            $('.open_Modal').click(function(e){
+                e.preventDefault();
+                var id = $(this).val();
+                $('#id').val(id);
+                $('#show_Modal').modal('show');
+            });
+        });
+    </script>
+    <!-- Modal -->
+    <div class="modal fade" id="show_Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> --}}
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if($user != null)
+                    <form action="/user_pending/{{ $user->id }}" method="post">
+                        <input type="hidden" id="id" name="user_id" />
+                        <div class="form-group col-md-12">
+                            <label for="organization">State reject reason</label>
+                            <textarea type="text" class="form-control" id="reject" name="rejectReason"
+                                placeholder="Please state your reject reason" required></textarea>
+                        </div>
+                        <div class="form-group col-md-4">
+                            @csrf
+                            <button type="submit" class="form-control btn-info" id="submitBtn" value="0"
+                                name='flag'>Submit</button>
+                        </div>
+                        {{-- <div class="modal-footer">
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div> --}}
+                    </form>
+                    @endif
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </x-app-layout>

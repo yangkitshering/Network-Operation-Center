@@ -53,7 +53,7 @@
     {{-- <p> &nbsp;{{ 'Registration Details as Follows:' }}</p> --}}
     {{-- <br> --}}
     <div class="details">
-        <h5>&nbsp; Registration Details as Follows:</h5>
+        {{-- <h5>&nbsp; Registration Details as Follows:</h5> --}}
         <p>&nbsp;<strong>Name:</strong>{{$mail_data['name']}}</p>
         <p>&nbsp;<strong>CID:</strong>{{$mail_data['cid']}}</p>
         <p>&nbsp;<strong>Organization:</strong>{{$mail_data['organization']}}</p>

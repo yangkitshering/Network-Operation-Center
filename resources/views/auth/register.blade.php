@@ -13,7 +13,7 @@
 
         <!-- CID -->
         <div class="mt-4">
-            <x-input-label for="cid" :value="__('CID')" />
+            <x-input-label for="cid" :value="__('CID Number')" />
             <x-text-input id="cid" class="block mt-1 w-full" type="text" name="cid" :value="old('cid')" required
                 autofocus autocomplete="cid" maxlength="11" />
             <x-input-error :messages="$errors->get('cid')" class="mt-2" />
@@ -75,7 +75,7 @@
 
         <!-- Multiple CID photos -->
         <div class="mt-4">
-            <x-input-label for="files" :value="__('Upload CID')" />
+            <x-input-label for="files" :value="__('Upload CID (Front)')" />
             <input id="files" name="files[]" type="file" class="mt-1 block w-full" accept=".jpg, .jpeg, .png, .pdf"
                 required multiple />
             <x-input-error class="mt-2" :messages="$errors->get('files.*')" />
@@ -89,15 +89,14 @@
             <x-input-error class="mt-2" :messages="$errors->get('file')" />
         </div> --}}
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex items-center justify-right mt-4">
             <x-primary-button class="ml-4">
-                {{ __('Register') }}
+                {{ __('Submit') }}
             </x-primary-button>
-            &nbsp;
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            {{-- <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="/">
-                {{ __('Already registered?') }}
-            </a>
+                {{ __('Login') }}
+            </a> --}}
         </div>
     </form>
 </x-guest-layout>

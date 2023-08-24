@@ -16,7 +16,7 @@
                             </h2>
                         </header>
                         <br>
-
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                         <table border="1" id="approved_rejectList" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -42,14 +42,38 @@
                                     @endif
 
                                     <td>
-                                        <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
-                                            <i class="far fa-edit"></i>
-                                            &#x1F441;View</a>
+                                        <form action="exited/{{ $res->id }}" method="post">
+                                            <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
+                                                <i class="far fa-edit"></i>
+                                                &#x1F441;View</a>
+
+                                            @if($res->exited = 0)
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-secondary btn-sm">
+                                                <i class="far fa-edit"></i>
+                                                Exit</a>
+                                            @endif
+                                        </form>
+                                    </td>
                                     </td>
                                 </tr>
                                 @endforeach
 
                             </tbody>
+
+                            @if (session('success'))
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                Swal.fire({
+                                    title: '{{ session('title') }}',
+                                    text: '{{ session('success') }}',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                });
+                            });
+                            </script>
+                            @endif
 
                         </table>
                         <div id="excel_button_wrapper"></div>
@@ -67,7 +91,7 @@
                             $('#approved_rejectList').DataTable({
                                 "buttons": [
                                 { extend: 'excel', 
-                                text: '<i class="btn btn-success btn-sm" aria-hidden="true"> Export as excel</i>',
+                                text: '<i class="btn btn-primary btn-sm" aria-hidden="true"> Export as excel</i>',
                                 title: 'Request List'
                                 }]
                             }).buttons().container().appendTo('#excel_button_wrapper');

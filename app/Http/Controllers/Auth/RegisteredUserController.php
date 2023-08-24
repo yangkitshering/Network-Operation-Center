@@ -19,6 +19,8 @@ use App\Models\Organization;
 use Illuminate\Support\Facades\DB;
 use App\Models\UserAdd;
 
+use Illuminate\Support\Facades\Http;
+
 class RegisteredUserController extends Controller
 {
 
@@ -101,17 +103,17 @@ class RegisteredUserController extends Controller
         ]);
 
         //save to add_user table
-        UserAdd::create([
-            'name' => $request->name,
-            'cid' => $request->cid,
-            'organization' => $request->organization,
-            'email' => $request->email,
-            'contact' => $request->contact,
-            'verified' => 0,
-            'user_id' => $user->id,
-            'user_ref_id' => 0,
-            'status' => 'I',
-        ]);
+        // UserAdd::create([
+        //     'name' => $request->name,
+        //     'cid' => $request->cid,
+        //     'organization' => $request->organization,
+        //     'email' => $request->email,
+        //     'contact' => $request->contact,
+        //     'verified' => 0,
+        //     'user_id' => $user->id,
+        //     'user_ref_id' => 0,
+        //     'status' => 'I',
+        // ]);
 
          // Attach CID photos to the user if any were uploaded
          if (!empty($filePaths)) {
@@ -130,7 +132,7 @@ class RegisteredUserController extends Controller
         $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
         $mail_data = [
             'title'=> 'Dear Sir/Madam,',
-            'body'=> 'This is to your notice that a new user has registered and needs your approval. Please refer below for more detail',
+            'body'=> 'The below user has submitted registration request for your approval.',
             'name' => $request->name,
             'cid' => $request->cid,
             'organization' => $org_name,
@@ -139,10 +141,23 @@ class RegisteredUserController extends Controller
 
         ];
 
+        //SMS
+        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+        $user = "tester";
+        $pass = "foobar";
+        $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
+        $to = "975". $request->contact;
+        Http::get($kannelApiUrl, [
+            'user' => $user,
+            'pass' => $pass,
+            'text' => $text,
+            'to' => $to,
+        ]);
+
         Mail::to('sonam.yeshi@bt.bt')
         // ->cc('itservices@bt.bt')
         ->send(new UserApproval($mail_data));
 
-        return redirect()->route('login')->with('message', "Your registration has been submitted successfully for approval. Please contact nnoc@bt.bt.");
+        return redirect()->route('login')->with('message', "Your registration has been submitted for approval. Please contact nnoc@bt.bt.");
     }
 }

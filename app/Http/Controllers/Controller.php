@@ -19,8 +19,6 @@ class Controller extends BaseController
     public function index()
     {
         if(! Auth::user()) {
-            // $rackList = RackList::all();
-            // return view('welcome', compact('rackList'));
             return view('welcome');
         } else {
             return redirect(RouteServiceProvider::HOME);

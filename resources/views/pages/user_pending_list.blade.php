@@ -17,6 +17,12 @@
 
                         <br>
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <!-- jQuery -->
+                        <script src="{{ asset('js/jquery.min.js') }}"></script>
+                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+                            rel="stylesheet">
+                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js">
+                        </script>
 
                         <table border="1" id="user-pending" class="table table-bordered table-striped">
                             <thead>
@@ -62,20 +68,14 @@
                                                 &#x2705; Approve</button>
 
 
-                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm" value="0"
-                                                name='flag'>
+                                            <button type="button" class="btn btn-danger btn-sm delete-confirm openModal"
+                                                id="openModal" value="{{$user->id}}">
                                                 <i class="far fa-trash-alt"></i>
                                                 &#x2718;Reject</button>
 
-                                            {{-- @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1">
-                                                <i class="far fa-trash-alt"></i>
-                                                Delete</button> --}}
-
-                                            {{-- <a href="view-user/{{ $user->id }}" class="btn btn-info btn-sm">
+                                            {{-- <button type="button" class="btn btn-info btn-sm" id="openModel">
                                                 <i class="far fa-edit"></i>
-                                                &#x1F441;View</a> --}}
+                                                &#x1F441;Open model</button> --}}
                                         </form>
 
                                     </td>
@@ -87,7 +87,7 @@
                             @else
                             <tbody>
                                 <tr>
-                                    <td colspan="9" align="center">No Users</td>
+                                    <td colspan="9" allign="center">No Users</td>
                                 </tr>
                             </tbody>
                             @endif
@@ -98,7 +98,7 @@
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
                             Swal.fire({
-                                title: 'Success',
+                                title: '{{ session('title') }}',
                                 text: '{{ session('success') }}',
                                 icon: 'success',
                                 confirmButtonText: 'OK'
@@ -117,4 +117,46 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready( function(){
+            $('.openModal').click(function(e){
+                e.preventDefault();
+                var id = $(this).val();
+                $('#id').val(id);
+                $('#showModal').modal('show');
+            });
+        });
+    </script>
+    <!-- Modal -->
+    <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> --}}
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if(count($users))
+                    <form action="user_pending/{{ $user->id }}" method="post">
+                        <input type="hidden" id="id" name="user_id" />
+                        <div class="form-group col-md-12">
+                            <label for="organization">State reject reason</label>
+                            <textarea type="text" class="form-control" id="reject" name="rejectReason"
+                                placeholder="Please state your reject reason" required></textarea>
+                        </div>
+                        <div class="form-group col-md-4">
+                            @csrf
+                            <button type="submit" class="form-control btn-info" id="submitBtn" value="0"
+                                name='flag'>Submit</button>
+                        </div>
+                        {{-- <div class="modal-footer">
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div> --}}
+                    </form>
+                    @endif
+                </div>
+
+            </div>
+        </div>
+    </div>
 </x-app-layout>

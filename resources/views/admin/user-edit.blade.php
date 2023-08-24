@@ -113,7 +113,7 @@
                         <hr>
 
                         <div class="flex items-center gap-4">
-                            <x-primary-button name="flag" value="1">{{ __('Edit') }}</x-primary-button>
+                            <x-primary-button name="flag" value="1">{{ __('Submit') }}</x-primary-button>
                             {{-- <x-primary-button name="flag" value="0">{{ __('Reject') }}</x-primary-button> --}}
                         </div>
                     </form>

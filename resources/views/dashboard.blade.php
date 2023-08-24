@@ -32,6 +32,7 @@
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-gray-900">
+                            <h4>Access Requests</h4>
                             <section class="content">
                                 <div class="container-fluid">
                                     <!-- Small boxes (Stat box) -->
@@ -45,7 +46,7 @@
                                                     $registeredUsersCount = DB::table('registrations')->count();
                                                     echo $registeredUsersCount;
                                                     ?>
-                                                    <p>Total Request</p>
+                                                    <p>Total Requests</p>
                                                 </div>
                                                 <div class="icon">
                                                     <i class="ion ion-person-add"></i>
@@ -64,7 +65,7 @@
                                                     $approvedUsersCount = DB::table('registrations')->where('status', 'A')->count();
                                                     echo $approvedUsersCount;
                                                     ?>
-                                                    <p>Approved</p>
+                                                    <p>Approved Requests</p>
                                                 </div>
                                                 <div class="icon">
                                                     <i class="ion ion-android-checkmark-circle"></i>
@@ -83,7 +84,7 @@
                                                     $pendingUsersCount = DB::table('registrations')->where('status', 'I')->count();
                                                     echo $pendingUsersCount;
                                                     ?>
-                                                    <p>Pending</p>
+                                                    <p>Pending Requests</p>
                                                 </div>
                                                 <div class="icon">
                                                     <i class="ion ion-android-time"></i>
@@ -102,7 +103,7 @@
                                                     $rejectedUsersCount = DB::table('registrations')->where('status', 'R')->count();
                                                     echo $rejectedUsersCount;
                                                     ?>
-                                                    <p>Rejected</p>
+                                                    <p>Rejected Requests</p>
                                                 </div>
                                                 <div class="icon">
                                                     <i class="ion ion-backspace"></i>
@@ -115,7 +116,7 @@
                                     </div>
                                     <!-- /.row -->
                                     <!-- Main row -->
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <!-- Left col -->
                                         <div>
                                             <br>
@@ -131,7 +132,113 @@
 
 
                                         </div>
+                                    </div> --}}
+                                    <!-- /.row -->
+                                </div>
+                                <!-- /.container-fluid -->
+                                
+                            </section>
+                            <h4>Registration Requests</h4>
+                            <section class="content">
+                                <div class="container-fluid">
+                                    <!-- Small boxes (Stat box) -->
+                                    <div class="row">
+                                        <div class="col-lg-3 col-6">
+                                            <!-- small box -->
+                                            <div class="small-box bg-info">
+                                                <div class="inner">
+                                                    <?php
+                                                    // Fetch registered users count from the database
+                                                    $registeredUsersCount = DB::table('registrations')->count();
+                                                    echo $registeredUsersCount;
+                                                    ?>
+                                                    <p>Total Registration Requests</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="ion ion-person-add"></i>
+                                                </div>
+                                                <a href="approvedList" class="small-box-footer"><i
+                                                        class="fas fa-arrow-circle-right"></i></a>
+                                            </div>
+                                        </div>
+                                        <!-- ./col -->
+                                        <div class="col-lg-3 col-6">
+                                            <!-- small box -->
+                                            <div class="small-box bg-success">
+                                                <div class="inner">
+                                                    <?php
+                                                    // Fetch approved users count from the database
+                                                    $approvedUsersCount = DB::table('registrations')->where('status', 'A')->count();
+                                                    echo $approvedUsersCount;
+                                                    ?>
+                                                    <p>Approved Registration Requests</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="ion ion-android-checkmark-circle"></i>
+                                                </div>
+                                                <a href="approvedList" class="small-box-footer"><i
+                                                        class="fas fa-arrow-circle-right"></i></a>
+                                            </div>
+                                        </div>
+                                        <!-- ./col -->
+                                        <div class="col-lg-3 col-6">
+                                            <!-- small box -->
+                                            <div class="small-box bg-warning">
+                                                <div class="inner">
+                                                    <?php
+                                                    // Fetch pending users count from the database
+                                                    $pendingUsersCount = DB::table('registrations')->where('status', 'I')->count();
+                                                    echo $pendingUsersCount;
+                                                    ?>
+                                                    <p>Pending Registration Requests</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="ion ion-android-time"></i>
+                                                </div>
+                                                <a href="pendingList" class="small-box-footer"> <i
+                                                        class="fas fa-arrow-circle-right"></i></a>
+                                            </div>
+                                        </div>
+                                        <!-- ./col -->
+                                        <div class="col-lg-3 col-6">
+                                            <!-- small box -->
+                                            <div class="small-box bg-danger">
+                                                <div class="inner">
+                                                    <?php
+                                                    // Fetch rejected users count from the database
+                                                    $rejectedUsersCount = DB::table('registrations')->where('status', 'R')->count();
+                                                    echo $rejectedUsersCount;
+                                                    ?>
+                                                    <p>Rejected Registration Requests</p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="ion ion-backspace"></i>
+                                                </div>
+                                                <a href="approvedList" class="small-box-footer"> <i
+                                                        class="fas fa-arrow-circle-right"></i></a>
+                                            </div>
+                                        </div>
+                                        <!-- ./col -->
                                     </div>
+                                    <!-- /.row -->
+                                    <!-- Main row -->
+                                    {{-- <div class="row">
+                                        <!-- Left col -->
+                                        <div>
+                                            <br>
+                                            <p>
+                                            <h2>Welcome to Our Network Operation Center (NOC) </h2>
+
+                                            At Bhutan Telecom, we pride ourselves on providing cutting-edge
+                                            Network Operation Center (NOC) solutions to businesses of all sizes.
+                                            Our NOC is the nerve center of your network infrastructure, ensuring smooth
+                                            operations, proactive monitoring, and rapid incident response. With our
+                                            expert team and state-of-the-art technology, we guarantee exceptional
+                                            network performance and uninterrupted connectivity.</p>
+
+
+                                        </div>
+                                    </div> --}}
                                     <!-- /.row -->
                                 </div>
                                 <!-- /.container-fluid -->

@@ -46,7 +46,6 @@ Route::middleware(['auth', 'verified','role:user'])->group(function(){
     Route::get('/ticket', [UserController::class, 'ticket'])->name('ticket');
     Route::post('/raiseTicket', [UserController::class, 'saveTicket'])->name('saveTicket');
     Route::get('/my_request', [UserController::class, 'my_request'])->name('user_request');
-    Route::put('/exited/{id}', [UserController::class, 'exit_now'])->name('exit-now');
 });
 
 // routes only for authenticated role (admin)
@@ -63,6 +62,10 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
     Route::get('/user_pending/{id}', [AdminController::class, 'view_user'])->name('user-view');
     Route::post('user_pending/{id}', [AdminController::class, 'user_approve_reject'])->name('user-approval-reject');
     Route::put('user_action/{id}', [AdminController::class, 'user_approve_reject'])->name('user-action');
+
+    Route::put('/exited/{id}', [AdminController::class, 'exit_now'])->name('exit-now');
+
+    // Route::post('reject_user/{id}', [AdminController::class, 'user_reject'])->name('user-reject');
     
     
 

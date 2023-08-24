@@ -17,5 +17,11 @@ class UserAdd extends Model
         'verified',
         'user_id',
         'user_ref_id',
+        'client_org',
     ];
+
+    public function user_add_cid()
+     {
+         return $this->hasMany(UserAddcid::class);
+    }
 }

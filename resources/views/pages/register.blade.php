@@ -153,7 +153,7 @@
                             <select id="users" class="js-example-basic-multiple block mt-1 w-full" name="users[]"
                                 multiple>
                                 @foreach($add_users as $usr)
-                                <option value="{{$usr->id}}">{{$usr->name}}</option>
+                                <option value="{{$usr->id}}">{{$usr->name}} ({{$usr->organization}})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -168,8 +168,11 @@
                         <div class="mt-4">
                             <x-input-label for="passport_photos" :value="__('Upload Passport Size Photo')" />
                             <input id="passport_photos" name="passport_photos[]" type="file" class="mt-1 block w-full"
-                                accept=".jpg, .jpeg, .png, .pdf" required multiple />
-                            <x-input-error class="mt-2" :messages="$errors->get('passport_photos.*')"   />
+                                accept=".jpg, .jpeg, .png" required multiple />
+                            <x-input-error class="mt-2" :messages="$errors->get('passport_photos.*')" />
+                            @error('passport_photos.*')
+                            <span class="text-red-500 text-sm !important">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="flex items-center gap-4">
@@ -177,7 +180,26 @@
                         </div>
                     </form>
 
-                    @if (session('success'))
+                    <script>
+                        const visitFromInput = document.getElementById('visitFrom');
+                        const visitToInput = document.getElementById('visitTo');
+                    
+                        visitFromInput.addEventListener('change', validateDates);
+                        visitToInput.addEventListener('change', validateDates);
+                    
+                        function validateDates() {
+                            const visitFromDate = new Date(visitFromInput.value);
+                            const visitToDate = new Date(visitToInput.value);
+                    
+                            if (visitToDate < visitFromDate) {
+                                visitToInput.setCustomValidity('Visit To Date must be greater than or equal to Visit From Date.');
+                            } else {
+                                visitToInput.setCustomValidity('');
+                            }
+                        }
+                    </script>
+
+                    @if(session('success'))
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             Swal.fire({

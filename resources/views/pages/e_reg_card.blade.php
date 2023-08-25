@@ -9,7 +9,8 @@
             font-family: 'Times New Roman', Times, serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            /* changes */
+            background-color: lightgray;
         }
 
         .container {
@@ -20,6 +21,8 @@
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             text-align: left;
+            /* changes */
+            border: 1px solid gray;
         }
 
         .logo {
@@ -38,6 +41,8 @@
             color: #333;
             font-size: 24px;
             margin-bottom: 10px;
+            text-align: center;
+
         }
 
         p {
@@ -91,7 +96,8 @@
             <img src="{{ public_path('/images/logo.png') }}" alt="Logo">
 
         </div>
-        <h1>Hello {{ $approval->name }}</h1>
+        {{-- <h1>Hello {{ $approval->name }}</h1> --}}
+        <h1>Visitors e-Card</h1>
 
 
         <table style="width: 100%;">
@@ -108,21 +114,23 @@
                     <p><strong>From: </strong> {{ $approval->visitFrom }} &nbsp;<strong>To: </strong> {{
                         $approval->visitTo }}</p>
                     <p><strong>Purpose of visit:</strong> {{ $approval->reason }}</p>
-                    <p><strong>Additional Visitors:</strong> </p>
-
-                    {{-- <p>Additional Visitors:</p> --}}
+                    <br>
+                    <p><strong>Additional Visitors Details:</strong> </p>
                     @foreach($additional_user as $user)
-                    <p>{{ $user->name }} (CID: {{ $user->cid }})</p>
+                    <p><b>Name:</b> {{ $user->name }}, <b>CID:</b> {{ $user->cid }}, <b>Organization:</b> {{
+                        $user->organization }}</p>
                     @endforeach
 
-                    <p><strong>Note*</strong> Kindly produce your individual CID during your visit.</p>
+                    <p><strong>Remark*</strong><i> Kindly produce your individual CID during your visit.</i></p>
                 </div>
                 <p>Approved By:</p>
                 <p>NOC Manager</p>
 
-                <p>Kindly notify the on-duty NOC staff when you exit NOC room. Failure to do so may result in your
-                    continued presence being assumed in the NOC room, and you may be held accountable for any misshaps
-                    in the equipment room during this period.</p>
+                <p><b>Note*</b><i>Kindly notify the on-duty NOC staff when you exit NOC room. Failure to do so may
+                        result in your
+                        continued presence being assumed in the NOC room, and you may be held accountable for any
+                        misshaps
+                        in the equipment room during this period.</i></p>
             </td>
 
             <td style="width: 0%;">

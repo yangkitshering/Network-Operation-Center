@@ -161,6 +161,11 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'passport_photos' => 'required|array', // Make sure to adjust the field name
             'passport_photos.*' => 'required|image|mimes:jpg,jpeg,png|max:2048', // Adjust max file size and allowed image formats
+        ],
+        [
+            'passport_photos.*.image' => ' Invalid file type. The passport photo must be an image file.',
+            'passport_photos.*.mimes' => ' Only JPG, JPEG, and PNG files are allowed for passport photos.',
+            'passport_photos.*.max' => 'The passport photo must not exceed 2MB in size.',
 
         ]);
 
@@ -310,9 +315,10 @@ class AdminController extends Controller
             // $users = User::all();
             $users = DB::table('users')
             ->join('organizations', 'users.organization', '=', 'organizations.id')
-            ->join('role_user', 'users.id', '=', 'role_user.user_id')
-            ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            ->select('users.*', 'organizations.org_name', 'roles.name as role')
+            // ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            // ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            // ->select('users.*', 'organizations.org_name', 'roles.name as role')
+            ->select('users.*', 'organizations.org_name')
             ->where('users.status', '!=', 'D')
             ->get();
         }else{

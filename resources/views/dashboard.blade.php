@@ -157,7 +157,7 @@
                                                 <div class="icon">
                                                     <i class="ion ion-person-add"></i>
                                                 </div>
-                                                <a href="approvedList" class="small-box-footer"><i
+                                                <a href="manage_users" class="small-box-footer"><i
                                                         class="fas fa-arrow-circle-right"></i></a>
                                             </div>
                                         </div>
@@ -176,7 +176,7 @@
                                                 <div class="icon">
                                                     <i class="ion ion-android-checkmark-circle"></i>
                                                 </div>
-                                                <a href="approvedList" class="small-box-footer"><i
+                                                <a href="manage_users" class="small-box-footer"><i
                                                         class="fas fa-arrow-circle-right"></i></a>
                                             </div>
                                         </div>
@@ -195,7 +195,7 @@
                                                 <div class="icon">
                                                     <i class="ion ion-android-time"></i>
                                                 </div>
-                                                <a href="pendingList" class="small-box-footer"> <i
+                                                <a href="user_pending" class="small-box-footer"> <i
                                                         class="fas fa-arrow-circle-right"></i></a>
                                             </div>
                                         </div>
@@ -214,7 +214,7 @@
                                                 <div class="icon">
                                                     <i class="ion ion-backspace"></i>
                                                 </div>
-                                                <a href="approvedList" class="small-box-footer"> <i
+                                                <a href="manage_users" class="small-box-footer"> <i
                                                         class="fas fa-arrow-circle-right"></i></a>
                                             </div>
                                         </div>
@@ -254,16 +254,21 @@
     <!-- JavaScript -->
     {{-- <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
-    {{-- <!-- <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script> --> --}}
+    {{--
+    <!-- <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script> -->
+    --}}
     {{-- <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('dist/js/adminlte.js') }}"></script> --}}
     {{-- <script src="{{ asset('plugins/jquery-mousewheel/jquery.mousewheel.js') }}"></script> --}}
     {{-- <script src="{{ asset('plugins/raphael/raphael.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('plugins/jquery-mapael/jquery.mapael.min.js') }}"></script> --}}
     {{-- <script src="{{ asset('plugins/jquery-mapael/maps/usa_states.min.js') }}"></script> --}}
-    {{-- <!-- <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script> --> --}}
-    {{-- <!-- <script src="{{ asset('dist/js/demo.js') }}"></script> --> --}}
-    {{-- <!-- <script src="{{ asset('dist/js/pages/dashboard2.js') }}"></script> --> --}}
+    {{--
+    <!-- <script src="{{ asset('plugins/chart.js/Chart.min.js') }}"></script> --> --}}
+    {{--
+    <!-- <script src="{{ asset('dist/js/demo.js') }}"></script> --> --}}
+    {{--
+    <!-- <script src="{{ asset('dist/js/pages/dashboard2.js') }}"></script> --> --}}
     <!-- <script>
         // Monthly Chart Data
         var ctxMonthly = document.getElementById('monthlyChart').getContext('2d');

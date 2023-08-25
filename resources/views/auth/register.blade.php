@@ -9,28 +9,6 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function() {
-        $("#contact").on("change", function() {
-            var contactNumber = $(this).val();
-            var contactPattern = /^(17|16)\d{0,8}$/; // Allow both 17 and 16 prefixes
-            var isValid = contactPattern.test(contactNumber);
-            
-            if (isValid) {
-                $("#phone-error").text(""); // Clear any error message
-            } else {
-                $("#phone-error").text("Invalid phone number format. Please use format: 17XXXXXXXX or 16XXXXXXXX");
-                $('#contact').val('');
-                // $("span").remove();
-                // $("phone-error").remove();
-            }
-           
-            
-        });
-        
-    });
-    </script>
-
     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
@@ -131,5 +109,23 @@
                 {{ __('Login') }}
             </a> --}}
         </div>
+
+        <script>
+            const inputElement = document.getElementById('contact');
+            const phoneErrorElement = document.getElementById('phone-error');
+    
+            inputElement.addEventListener('blur', function() {
+                
+                const inputValue = inputElement.value.trim();
+                const isValid = inputValue.length === 8 && (inputValue.startsWith('16') || inputValue.startsWith('17'));
+    
+                // Update error message based on validation result
+                if (isValid) {
+                    phoneErrorElement.textContent = '';
+                } else {
+                    phoneErrorElement.textContent = 'Invalid mobile number. Please start with 16 or 17 and use 8 digits.';
+                }
+            });
+        </script>
     </form>
 </x-guest-layout>

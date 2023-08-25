@@ -21,7 +21,7 @@
                 </x-nav-link>
                 @endif
 
-                <!-- Dropdown for pendings -->  
+                <!-- Dropdown for pendings -->
                 {{-- @if (Auth::user()->hasRole('admin'))
                 <div class="hidden sm:flex sm:items-center sm:ml-6">
                     <x-dropdown>
@@ -71,11 +71,11 @@
                 </x-nav-link>
                 @endif
                 @if (Auth::user()->hasRole('user'))
-                <x-nav-link :href="route('ticket')" :active="request()->routeIs('/ticket')">
-                    {{ __('Raise Ticket') }}
-                </x-nav-link>
                 <x-nav-link :href="route('user_request')" :active="request()->routeIs('/user_request')">
                     {{ __('View Access Request') }}
+                </x-nav-link>
+                <x-nav-link :href="route('ticket')" :active="request()->routeIs('/ticket')">
+                    {{ __('Raise Ticket') }}
                 </x-nav-link>
                 @endif
             </div>

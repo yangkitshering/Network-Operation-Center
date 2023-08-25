@@ -24,6 +24,13 @@
                                     <th>Rack Name</th>
                                     <th>Purpose of Visit</th>
                                     <th>Status</th>
+                                    <th class="hidden">Name</th>
+                                    <th class="hidden">CID</th>
+                                    <th class="hidden">Email</th>
+                                    <th class="hidden">Contact</th>
+                                    <th class="hidden">Rack No</th>
+                                    <th class="hidden">Visit From</th>
+                                    <th class="hidden">Visit To</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -40,6 +47,13 @@
                                     @else
                                     <td>{{'Rejected'}}</td>
                                     @endif
+                                    <td class="hidden">{{$res->name}}</td>
+                                    <td class="hidden">{{$res->cid}}</td>
+                                    <td class="hidden">{{$res->email}}</td>
+                                    <td class="hidden">{{$res->contact}}</td>
+                                    <td class="hidden">{{$res->rack_no}}</td>
+                                    <td class="hidden">{{$res->visitFrom}}</td>
+                                    <td class="hidden">{{$res->visitTo}}</td>
 
                                     <td>
                                         <form action="exited/{{ $res->id }}" method="post">
@@ -53,7 +67,7 @@
                                             <button type="submit" class="btn btn-secondary btn-sm">
                                                 <i class="far fa-edit"></i>
                                                 Exit</a>
-                                            @endif
+                                                @endif
                                         </form>
                                     </td>
                                     </td>
@@ -92,7 +106,7 @@
                                 "buttons": [
                                 { extend: 'excel', 
                                 text: '<i class="btn btn-primary btn-sm" aria-hidden="true"> Export as excel</i>',
-                                title: 'Request List'
+                                title: 'Access request list'
                                 }]
                             }).buttons().container().appendTo('#excel_button_wrapper');
                     

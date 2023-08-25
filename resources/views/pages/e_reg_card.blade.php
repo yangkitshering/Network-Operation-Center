@@ -110,13 +110,12 @@
                     <p><strong>Purpose of visit:</strong> {{ $approval->reason }}</p>
                     <p><strong>Additional Visitors:</strong> </p>
 
-                    <p><strong>Note*</strong> Kindly produce your individual CID during your visit.</p>
-
                     {{-- <p>Additional Visitors:</p> --}}
                     @foreach($additional_user as $user)
                     <p>{{ $user->name }} (CID: {{ $user->cid }})</p>
                     @endforeach
 
+                    <p><strong>Note*</strong> Kindly produce your individual CID during your visit.</p>
                 </div>
                 <p>Approved By:</p>
                 <p>NOC Manager</p>

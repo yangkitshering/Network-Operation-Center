@@ -151,7 +151,7 @@
                         <div class="mt-4">
                             <x-input-label for="users" :value="__('Additional users')" />
                             <select id="users" class="js-example-basic-multiple block mt-1 w-full" name="users[]"
-                                required multiple>
+                                multiple>
                                 @foreach($add_users as $usr)
                                 <option value="{{$usr->id}}">{{$usr->name}}</option>
                                 @endforeach

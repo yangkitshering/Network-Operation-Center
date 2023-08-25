@@ -46,6 +46,11 @@ Route::middleware(['auth', 'verified','role:user'])->group(function(){
     Route::get('/ticket', [UserController::class, 'ticket'])->name('ticket');
     Route::post('/raiseTicket', [UserController::class, 'saveTicket'])->name('saveTicket');
     Route::get('/my_request', [UserController::class, 'my_request'])->name('user_request');
+
+    Route::get('manage_users/add_user/{id}', [AdminController::class, 'edit_adduser']);
+    Route::post('manage_users/edit_adduser/{id}', [AdminController::class, 'update_adduser']) -> name('useradd-update');
+    Route::delete('manage_users/{id}', [AdminController::class, 'delete_adduser']);
+
 });
 
 // routes only for authenticated role (admin)

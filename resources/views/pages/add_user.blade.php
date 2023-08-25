@@ -85,7 +85,7 @@
 
                             <!-- Multiple CID photos -->
                             <div class="mt-4">
-                                <x-input-label for="files" :value="__('Upload Passport Size Photo')" />
+                                <x-input-label for="files" :value="__('Upload CID (Front)')" />
                                 <input id="files" name="files[]" type="file" class="mt-1 block w-full"
                                     accept=".jpg, .jpeg, .png, .pdf" required multiple />
                                 <x-input-error class="mt-2" :messages="$errors->get('files.*')" />

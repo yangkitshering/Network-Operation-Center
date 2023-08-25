@@ -3,13 +3,21 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     @if(session()->has('message'))
-    <div class="mt-4">
+    <div class="mt-4" id="errordiv">
         <p class="alert alert-info" style="color: red">
             {{ session()->get('message') }}
         </p>
     </div>
     <br>
     @endif
+
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script>
+        $(document).on('input', function() {
+         $('#errordiv').remove();
+         $('.text-sm').find('li').remove();
+        });
+    </script>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf

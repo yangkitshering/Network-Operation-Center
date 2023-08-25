@@ -75,17 +75,23 @@
 
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1" name="flag" value="1">
+                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1"
+                                                name="flag" value="1">
                                                 <i class="far fa-trash-alt"></i>
                                                 Delete</button>
 
                                         </form>
                                         @endif
                                         @else
-                                        <form action="manage_users/{{ $user->id }}" method="post">
+                                        <form action="manage_users/add_user/{{ $user->id }}" method="post">
+                                            <a href="manage_users/add_user/{{ $user->id }}" class="btn btn-success btn-sm">
+                                                <i class="far fa-edit"></i>
+                                                Editt</a>
+
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1" name="flag" value="2">
+                                            <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1"
+                                                name="flag" value="2">
                                                 <i class="far fa-trash-alt"></i>
                                                 Delete</button>
                                         </form>
@@ -99,7 +105,7 @@
                             @else
                             <tbody>
                                 <tr>
-                                    <td colspan="9" align="center">No Users</td>
+                                    <td colspan="9" allign="center">No Users</td>
                                 </tr>
                             </tbody>
                             @endif

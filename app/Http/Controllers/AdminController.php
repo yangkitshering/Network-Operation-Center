@@ -112,7 +112,13 @@ class AdminController extends Controller
             ->where('r.id', '=', $id)
             ->get()->first();
 
-            return view('pages.view', compact('requests'));
+        $visitors = DB::table('visitors')
+        ->select('visitors.*')
+        ->where('visitors.reg_id', '=', $id)
+        ->get();
+
+
+            return view('pages.view', compact('requests', 'visitors'));
     }
 
     /**
@@ -174,19 +180,21 @@ class AdminController extends Controller
         $res = Registration::create($input);
 
         //to save additional visitors
-        foreach($request->users as $id){
-            $detail = UserAdd::find($id);
-            visitor::create([
-                'name' => $detail->name,
-                'cid' => $detail->cid,
-                'client_org' => $detail->client_org,
-                'organization' => $detail->organization,
-                'email' => $detail->email,
-                'contact' => $detail->contact,
-                'user_add_id' => $detail->id,
-                'user_ref_id' => $detail->user_ref_id,
-                'reg_id' => $res->id
-            ]);
+        if($request->users != null){
+            foreach($request->users as $id){
+                $detail = UserAdd::find($id);
+                visitor::create([
+                    'name' => $detail->name,
+                    'cid' => $detail->cid,
+                    'client_org' => $detail->client_org,
+                    'organization' => $detail->organization,
+                    'email' => $detail->email,
+                    'contact' => $detail->contact,
+                    'user_add_id' => $detail->id,
+                    'user_ref_id' => $detail->user_ref_id,
+                    'reg_id' => $res->id
+                ]);
+            }
         }
 
         $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
@@ -436,6 +444,13 @@ class AdminController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Attach CID photos to the user if any were uploaded
+        if (!empty($filePaths)) {
+            $user->cidPhotos()->createMany(array_map(function ($path) {
+                return ['path' => $path];
+            }, $filePaths));
+        }
+
         //save to new add user table
         $add_user = UserAdd::create([
             'name' => $request->name,
@@ -450,9 +465,9 @@ class AdminController extends Controller
             'status' => 'I'
         ]);
 
-         // Attach CID photos to the user if any were uploaded
-         if (!empty($filePaths)) {
-            $user->cidPhotos()->createMany(array_map(function ($path) {
+        // Attach CID photos to the user if any were uploaded
+        if (!empty($filePaths)) {
+            $add_user->user_add_cid()->createMany(array_map(function ($path) {
                 return ['path' => $path];
             }, $filePaths));
         }
@@ -676,64 +691,65 @@ class AdminController extends Controller
 
     }
 
-    // //method to approve and reject user request
-    // public function user_reject($id, Request $request){
+    //edit added user
+    public function edit_adduser($id){
+        
+            $user = UserAdd::find($id); 
 
-    //     // dd($request->user_id);
-    //     $usr = User::where('id', $request->user_id)->first();
+            // $organizations = DB::table('organizations')
+            // ->join('users', 'users.organization', '=', 'organizations.id')
+            // ->select('organizations.*')
+            // ->where('users.id', '=', $id)
+            // ->get();
 
-    //     $mail_data = [
-    //         'title'=> 'Hello '.$usr->name. ',',
-    //         'body'=> ''
-    //     ];
-    //          //Reject
-    //          $mail_data['body'] = 'Your user registration request is rejected due to '. $request->rejectReason .'.' .' Please submit registration request again.';
-    //         //  $usr->verified = 0;
-    //         //  $usr->status = 'R';
-    //          $msg = 'New user request has been Rejected';
-    //         //  $usr->save(); 
+            $cid_files = DB::table('user_addcids')
+                    ->select('user_addcids.*')
+                    ->where('user_addcids.user_add_id', '=', $id)
+                    ->get();
+                    
+        return view('pages.add_user_edit', compact('user', 'cid_files'));
+        
+    }
 
-    //          //change status to verified to add user table
-    //         DB::table('user_adds')
-    //         ->where('user_id', $request->user_id)
-    //         ->update(['verified' => false,
-    //                   'status' => 'R']);
+    // POST :: Update User
+    public function update_adduser(Request $request, $id)
+    {
+        $add_usr = UserAdd::find($id);
 
-    //         $title = 'Rejected';
-    //         $sms = 'Your registration has been rejected due to '. $request->rejectReason.'.'. 'For more please contact nnoc@bt.bt or 17171717';
-    //         // DB::table('users')->where('id', $id)->delete();
-         
+        $request->validate([
+            'name' => ['required', 'string', 'max:200'],
+            'cid' => ['required', 'string', 'max:11'],
+            'organization' => 'required',
+            'contact' => ['required', 'max:8'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+        ]);
 
-    //         // $org_name = DB::table('organizations')->where('id', $usr->organization)->value('org_name');
-    //         // $file_path = DB::table('c_i_d_files')->where('user_id', $usr->id)->value('path');
-    //         // Generate the PDF
-    //         // $pdf= Pdf::loadView('pages.eCard', compact('usr', 'org_name', 'file_path'));
-    //         // Save the PDF to storage
-    //         // $pdfFileName = 'eCard_' . $usr->name . '_' . time() . '.pdf'; // Generate a unique name
-    //         // $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
-    //         // $eCard_path = '/public/'.$pdfFileName;
+        $usr = User::find($add_usr->user_id);
+            $usr->update([
+                    'name' => $request->name,
+                    'cid' => $request->cid,
+                    'organization' => $request->client_org,
+                    'contact' => $request->contact,
+                    'email' => $request->email,  
+            ]);
 
-    //         $status = $usr->verified;
-    //         Mail::to($usr->email)
-    //         ->send(new UserApprovalNotify($mail_data));
+            $add_usr->update([
+                'name' => $request->name,
+                'cid' => $request->cid,
+                'organization' => $request->organization,
+                'contact' => $request->contact,
+                'email' => $request->email,  
+        ]);
 
-    //         //SMS
-            
-    //         $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
-    //         $user = "tester";
-    //         $pass = "foobar";
-    //         $text = $sms;
-    //         $to = "975". $usr->contact;
-    //         Http::get($kannelApiUrl, [
-    //             'user' => $user,
-    //             'pass' => $pass,
-    //             'text' => $text,
-    //             'to' => $to,
-    //         ]);
+            // Detaching Role Before Assigning The Updated Role
+            // if($usr->hasRole('user')) { $usr->detachRole('user'); } else { $usr->detachRole('admin'); }
 
-    //         Session::flash('success', $msg);
+            // Updating the Role
+            // User::find($id)->attachRole($request->roletype);
 
-    //     return redirect()->back()->with('title', $title);
-
-    // }
+            $msg = 'user updated successfully.';
+            Session::flash('success', $msg);
+            // return redirect('manage_users');
+        return redirect()->back();
+    }
 }

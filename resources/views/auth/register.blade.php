@@ -1,5 +1,36 @@
 <x-guest-layout>
     <h1 class="text-center">Registration</h1><br>
+
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script>
+        $(document).on('input', function() {
+        //  $('#errordiv').remove();
+         $('.text-sm').find('li').remove();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+        $("#contact").on("change", function() {
+            var contactNumber = $(this).val();
+            var contactPattern = /^(17|16)\d{0,8}$/; // Allow both 17 and 16 prefixes
+            var isValid = contactPattern.test(contactNumber);
+            
+            if (isValid) {
+                $("#phone-error").text(""); // Clear any error message
+            } else {
+                $("#phone-error").text("Invalid phone number format. Please use format: 17XXXXXXXX or 16XXXXXXXX");
+                $('#contact').val('');
+                // $("span").remove();
+                // $("phone-error").remove();
+            }
+           
+            
+        });
+        
+    });
+    </script>
+
     <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
@@ -14,7 +45,7 @@
         <!-- CID -->
         <div class="mt-4">
             <x-input-label for="cid" :value="__('CID Number')" />
-            <x-text-input id="cid" class="block mt-1 w-full" type="text" name="cid" :value="old('cid')" required
+            <x-text-input id="cid" class="block mt-1 w-full" type="number" name="cid" :value="old('cid')" required
                 autofocus autocomplete="cid" maxlength="11" />
             <x-input-error :messages="$errors->get('cid')" class="mt-2" />
         </div>
@@ -23,7 +54,7 @@
         <div class="mt-4">
             <x-input-label for="organization" :value="__('Organization Name')" />
             <select id="organization" class="block mt-1 w-full" name="organization" required autofocus>
-                <option value="" disabled selected>Select an organization</option>
+                <option value="">Select an organization</option>
                 @foreach($organizations as $organization)
                 <option value="{{ $organization->id }}">{{ $organization->org_name}}</option>
                 @endforeach
@@ -49,7 +80,8 @@
         <div class="mt-4">
             <x-input-label for="contact" :value="__('Mobile Number')" />
             <x-text-input id="contact" class="block mt-1 w-full" type="number" name="contact" :value="old('contact')"
-                required autofocus autocomplete="contact" />
+                required autofocus autocomplete="contact" maxlength="8" />
+            <span id="phone-error" style="color: red;"></span>
             <x-input-error :messages="$errors->get('contact')" class="mt-2" />
         </div>
 
@@ -93,7 +125,8 @@
             <x-primary-button class="ml-4">
                 {{ __('Submit') }}
             </x-primary-button>
-            {{-- <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            {{-- <a
+                class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="/">
                 {{ __('Login') }}
             </a> --}}

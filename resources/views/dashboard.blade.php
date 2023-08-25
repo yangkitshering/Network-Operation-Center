@@ -136,7 +136,7 @@
                                     <!-- /.row -->
                                 </div>
                                 <!-- /.container-fluid -->
-                                
+                                <br>
                             </section>
                             <h4>Registration Requests</h4>
                             <section class="content">
@@ -145,11 +145,11 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-6">
                                             <!-- small box -->
-                                            <div class="small-box bg-info">
+                                            <div class="small-box bg-primary">
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch registered users count from the database
-                                                    $registeredUsersCount = DB::table('registrations')->count();
+                                                    $registeredUsersCount = DB::table('users')->count();
                                                     echo $registeredUsersCount;
                                                     ?>
                                                     <p>Total Registration Requests</p>
@@ -164,11 +164,11 @@
                                         <!-- ./col -->
                                         <div class="col-lg-3 col-6">
                                             <!-- small box -->
-                                            <div class="small-box bg-success">
+                                            <div class="small-box bg-secondary">
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch approved users count from the database
-                                                    $approvedUsersCount = DB::table('registrations')->where('status', 'A')->count();
+                                                    $approvedUsersCount = DB::table('users')->where('status', 'A')->count();
                                                     echo $approvedUsersCount;
                                                     ?>
                                                     <p>Approved Registration Requests</p>
@@ -183,11 +183,11 @@
                                         <!-- ./col -->
                                         <div class="col-lg-3 col-6">
                                             <!-- small box -->
-                                            <div class="small-box bg-warning">
+                                            <div class="small-box bg-light">
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch pending users count from the database
-                                                    $pendingUsersCount = DB::table('registrations')->where('status', 'I')->count();
+                                                    $pendingUsersCount = DB::table('users')->where('status', 'I')->count();
                                                     echo $pendingUsersCount;
                                                     ?>
                                                     <p>Pending Registration Requests</p>
@@ -206,7 +206,7 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch rejected users count from the database
-                                                    $rejectedUsersCount = DB::table('registrations')->where('status', 'R')->count();
+                                                    $rejectedUsersCount = DB::table('users')->where('status', 'R')->count();
                                                     echo $rejectedUsersCount;
                                                     ?>
                                                     <p>Rejected Registration Requests</p>

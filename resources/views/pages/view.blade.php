@@ -84,6 +84,18 @@
                                     <td class="pr-1"> <b>From:&nbsp;</b> {{ $requests->visitFrom }}</td>
                                     <td><b>To: &nbsp;</b>{{ $requests->visitTo }}</td>
                                 </tr>
+
+                                @if(count($visitors) != 0)
+                                <th>Additional Visitors</th>
+                                @foreach($visitors as $visitor)
+                                <tr>
+                                    {{-- <th rowspan="2">Additional Visitors</th> --}}
+                                    <td><b>Name:&nbsp;</b>{{$visitor->name}}</td>
+                                    <td><b>CID: &nbsp;</b>{{ $visitor->cid }}</td>
+                                </tr>
+                                @endforeach
+                                @endif
+
                                 <tr>
                                     <th>Status</th>
                                     @if($requests->status == 'I')

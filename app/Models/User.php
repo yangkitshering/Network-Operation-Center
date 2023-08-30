@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'cid',
         'organization',
+        'dc_id',
         'email',
         'contact',
         'password',

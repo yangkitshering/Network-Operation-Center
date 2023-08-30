@@ -42,32 +42,6 @@ class HomeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function save_request(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ]);
-        $input = $request->all();
-        $input['status'] = 'I';
-        $res = Registration::create($input);
-
-        $mail_data = [
-            'title'=> 'Dear Sir/Madam,',
-            'body'=> 'The server rack access request registration needs your approval.'
-        ];
-        
-        // $this->save_mail($mail_data);
-        // $approval_token = $this->save_mail($mail_data)->token;
-        Mail::to('sonam.yeshi@bt.bt')->send(new ApprovalRequest($mail_data));
-
-
-        Session::flash('success', 'Your request submitted successfully.');
-        return redirect()->back();
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $id)

@@ -22,7 +22,7 @@
                                 <tr>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
-                                    <th>Purpose of Visit</th>
+                                    <th>Purpose</th>
                                     <th>Status</th>
                                     <th class="hidden">Name</th>
                                     <th class="hidden">CID</th>
@@ -41,11 +41,15 @@
                                 <tr>
                                     <td>{{$res->org_name}}</td>
                                     <td>{{$res->rack_name}}</td>
-                                    <td>{{$res->reason}}</td>
+                                    <td>{{'Access Request'}}</td>
+                                    @if($res->exited == 0)
                                     @if ($res->status == 'A')
                                     <td>{{'Approved'}}</td>
                                     @else
                                     <td>{{'Rejected'}}</td>
+                                    @endif
+                                    @else
+                                    <td>{{'Exited'}}</td>
                                     @endif
                                     <td class="hidden">{{$res->name}}</td>
                                     <td class="hidden">{{$res->cid}}</td>
@@ -61,7 +65,7 @@
                                                 <i class="far fa-edit"></i>
                                                 &#x1F441;View</a>
 
-                                            @if($res->exited = 0)
+                                            @if($res->exited == 0 && $res->status != 'R')
                                             @csrf
                                             @method('PUT')
                                             <button type="submit" class="btn btn-secondary btn-sm">

@@ -25,7 +25,11 @@ return new class extends Migration
             $table->timestamp('visitTo')->nullable();
             $table->boolean('exited');
             $table->char('status');
+            $table->integer('requester_ref');
             $table->string('passport_path');
+            $table->string('reject_reason')->nullable();
+            $table->string('focal_name')->nullable();
+            $table->string('focal_contact')->nullable();
             $table->timestamps();
         });
     }

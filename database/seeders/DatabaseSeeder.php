@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call(LaratrustSeeder::class);
         $this->call(AdminSeeder::class);
-        $this->call(DCSeeder::class);
-        $this->call(OrgSeeder::class);
-        $this->call(RackSeeder::class);
+        // $this->call(DCSeeder::class);
+        // $this->call(OrgSeeder::class);
+        // $this->call(RackSeeder::class);
         
     }
 }

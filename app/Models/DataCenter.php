@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class DataCenter extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'dc_name',
+        'dc_location',
+    ];
 }

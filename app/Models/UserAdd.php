@@ -12,6 +12,7 @@ class UserAdd extends Model
         'name',
         'cid',
         'organization',
+        'dc_id',
         'email',
         'contact',
         'verified',

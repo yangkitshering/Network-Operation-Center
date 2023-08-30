@@ -14,19 +14,49 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $usr = User::create([
-            'name' => 'Administrator',
+        //Thimphu DC Admin
+        $admin_thimphu_dc = User::create([
+            'name' => 'Administrator (Thimphu DC)',
             'cid' => '11000000011',
             'organization' => 1,
-            'email' => 'admin@bt.bt',
+            'dc_id' => 1,
+            'email' => 'noc@bt.bt',
             'contact' => '17123410',
             'password' => Hash::make('admin@123'),
             'verified' => 1,
             'user_ref_id' => 0,
             'status' => 'A'
-            // 'file_name' => null,
-            // 'file_path' => null
         ]);
-        $usr->attachRole('admin');
+        $admin_thimphu_dc->attachRole('admin');
+
+        //Phuntsholing DC Admin
+        $admin_pling_dc = User::create([
+            'name' => 'Administrator (Pling DC)',
+            'cid' => '11000000011',
+            'organization' => 2,
+            'dc_id' => 2,
+            'email' => 'numo@bt.bt',
+            'contact' => '17955641',
+            'password' => Hash::make('admin@123'),
+            'verified' => 1,
+            'user_ref_id' => 0,
+            'status' => 'A'
+        ]);
+        $admin_pling_dc->attachRole('admin');
+
+        //Jakar DC Admin
+        $admin_jakar_dc = User::create([
+            'name' => 'Administrator (Jakar DC)',
+            'cid' => '11000000011',
+            'organization' => 3,
+            'dc_id' => 3,
+            'email' => 'komal.sundas@bt.bt',
+            'contact' => '17171572',
+            'password' => Hash::make('admin@123'),
+            'verified' => 1,
+            'user_ref_id' => 0,
+            'status' => 'A'
+        ]);
+        $admin_jakar_dc->attachRole('admin');
     }
 }

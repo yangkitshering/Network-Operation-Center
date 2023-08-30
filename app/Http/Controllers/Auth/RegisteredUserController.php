@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -53,7 +51,6 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Adjust max file size as needed
-
         ],
         [
             'password.required' => 'The password field is required.',
@@ -62,18 +59,7 @@ class RegisteredUserController extends Controller
             'files.*.required' => 'The CID photo is required.',
             'files.*.mimes' => 'The CID photo must be a valid image or PDF file.',
             'cid.required' => 'The CID field is required.', // Error message for CID field
-
-
         ]);
-
-        // Store the uploaded file and get the path
-        // if ($request->hasFile('file')) {
-        //     $file = $request->file('file');
-        //     $original_filename = time() . '_' . $file->getClientOriginalName();
-        //     $cid_name = $request->cid . '.' . $file->getClientOriginalExtension();
-        //     $filePath = $file->storeAs('cid_photos', $cid_name, 'public');
-        // }
-
         //for multiple file
         $cid = $request->cid;
         $filePaths = [];
@@ -89,11 +75,12 @@ class RegisteredUserController extends Controller
             }
         }
 
-
+        $org = Organization::find($request->organization);
         $user = User::create([
             'name' => $request->name,
             'cid' => $request->cid,
             'organization' => $request->organization,
+            'dc_id' => $org->dc_id,
             'email' => $request->email,
             'contact' => $request->contact,
             'verified' => 0,
@@ -101,7 +88,6 @@ class RegisteredUserController extends Controller
             'status' => 'I',
             'password' => Hash::make($request->password),
         ]);
-
         //save to add_user table
         // UserAdd::create([
         //     'name' => $request->name,
@@ -122,42 +108,66 @@ class RegisteredUserController extends Controller
             }, $filePaths));
         }
 
-
         $user->attachRole('user');
-
         event(new Registered($user));
-
         // Auth::login($user);
         // return redirect(RouteServiceProvider::HOME);
-        $org_name = DB::table('organizations')->where('id', $request->organization)->value('org_name');
+
         $mail_data = [
             'title'=> 'Dear Sir/Madam,',
             'body'=> 'The below user has submitted registration request for your approval.',
             'name' => $request->name,
             'cid' => $request->cid,
-            'organization' => $org_name,
+            'organization' => $org->org_name,
             'email' => $request->email,
             'contact' => $request->contact,
 
         ];
 
-        //SMS
-        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
-        $user = "tester";
-        $pass = "foobar";
-        $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
-        $to = "975". $request->contact;
-        Http::get($kannelApiUrl, [
-            'user' => $user,
-            'pass' => $pass,
-            'text' => $text,
-            'to' => $to,
-        ]);
+        //get approver
+        $approver = $this->getApprover($org->dc_id);           
+        //notify to approver           
+        foreach($approver as $approve){
+            Mail::to($approve->email)
+            // ->cc('itservices@bt.bt')
+            ->send(new UserApproval($mail_data));
 
-        Mail::to('sonam.yeshi@bt.bt')
-        // ->cc('itservices@bt.bt')
-        ->send(new UserApproval($mail_data));
+            $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+            $user = "tester";
+            $pass = "foobar";
+            $text = "New registration request has been submitted for your approval. Please check your email.";
+            $to = "975". $approve->contact;
+            Http::get($kannelApiUrl, [
+                'user' => $user,
+                'pass' => $pass,
+                'text' => $text,
+                'to' => $to,
+            ]);
+        }
+
+        //notify to user
+        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+            $user = "tester";
+            $pass = "foobar";
+            $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
+            $to = "975". $request->contact;
+            Http::get($kannelApiUrl, [
+                'user' => $user,
+                'pass' => $pass,
+                'text' => $text,
+                'to' => $to,
+            ]);
 
         return redirect()->route('login')->with('message', "Your registration has been submitted for approval. Please contact nnoc@bt.bt.");
+    }
+    
+    //function to get approver list bases on DC
+    public function getApprover($dc){
+        return DB::table('users as u')
+                    ->join('role_user', 'role_user.user_id', 'u.id')
+                    ->select('u.email','u.contact')
+                    ->where('u.dc_id', $dc)
+                    ->where('role_user.role_id', 1)
+                    ->get();
     }
 }

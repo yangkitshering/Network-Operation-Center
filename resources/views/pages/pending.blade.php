@@ -14,11 +14,6 @@
                             <h2 class="text-lg font-medium text-gray-900 text-center">
                                 {{ __('Access Pending Request') }}
                             </h2>
-
-                            {{-- <p class="mt-1 text-sm text-gray-600">
-                                {{ __("List of approved requests") }}
-                            </p> --}}
-
                         </header>
                         <br>
 
@@ -34,6 +29,7 @@
                         <table border="1" id="historyTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th>UID</th>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
                                     <th>Purpose</th>
@@ -42,10 +38,11 @@
                                 </tr>
                             </thead>
 
+                            @if(count($requests))
                             <tbody>
-
                                 @foreach($requests as $res)
                                 <tr>
+                                    <td>{{$res->id}}</td>
                                     <td>{{$res->org_name}}</td>
                                     <td>{{$res->rack_name}}</td>
                                     <td>Access request</td>
@@ -65,9 +62,10 @@
                                                 <i class="far fa-edit"></i>
                                                 &#x1F441;View</a>
 
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-success btn-sm" value="1" name='flag'>
+                                            {{-- @csrf
+                                            @method('PUT') --}}
+                                            <button type="button" class="btn btn-success btn-sm openApprove"
+                                                id="openApprove" value="{{ $res->id }}" name='flag'>
                                                 <i class="far fa-edit"></i>
                                                 &#x2705; Approve</button>
 
@@ -76,17 +74,20 @@
                                                 value="{{ $res->id}}">
                                                 <i class="far fa-trash-alt"></i>
                                                 &#x2718;Reject</button>
-                                            {{-- <button type="submit" class="btn btn-danger btn-sm delete-confirm"
-                                                value="0" name='flag'>
-                                                <i class="far fa-trash-alt"></i>
-                                                &#x2718;Reject</button> --}}
                                         </form>
                                         @endif
                                     </td>
                                 </tr>
                                 @endforeach
-
                             </tbody>
+                            @else
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" align="center">No Access Request</td>
+                                </tr>
+                            </tbody>
+                            @endif
+                            
 
                         </table>
 
@@ -132,6 +133,54 @@
         });
     </script>
 
+    <script>
+        $(document).ready(function () {
+            $('.openApprove').click(function (e) {
+                e.preventDefault();
+                var id = $(this).val();
+                $('#reg_id').val(id);
+                $('#showModalApprove').modal('show');
+            });
+        });
+    </script>
+
+    <!-- Modal for Approval -->
+    <div class="modal fade" id="showModalApprove" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if(count($requests))
+                    <form action="{{ route('approve_reject', $res->id) }}" method="post">
+
+                        @csrf
+                        <p  align="center"><b>NOC Focal Contact</b></p>
+                        <input type="hidden" id="reg_id" name="reg_id">
+                        <div class="form-group">
+                            <label for="focal_person">Focal Person:</label>
+                            <input type="text" class="form-control" id="focal_person" name="focal_person" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="focal_contact">Focal Contact:</label>
+                            <input type="text" class="form-control" id="focal_contact" name="focal_contact" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="form-control btn-info" id="submitApproveBtn" value="1"
+                                name="flag">
+                                Approve
+                            </button>
+                        </div>
+                    </form>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="showModalReject" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -155,13 +204,9 @@
                             <button type="submit" class="form-control btn-info" id="submitBtn" value="0"
                                 name='flag'>Submit</button>
                         </div>
-                        {{-- <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div> --}}
                     </form>
                     @endif
                 </div>
-
             </div>
         </div>
     </div>

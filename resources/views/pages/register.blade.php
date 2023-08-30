@@ -19,22 +19,6 @@
                         </p> --}}
                     </header>
 
-                    {{-- time picker add on --}}
-
-                    {{--
-                    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-                    <link rel="stylesheet"
-                        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css"
-                        integrity="sha512-LT9fy1J8pE4Cy6ijbg96UkExgOjCqcxAC7xsnv+mLJxSvftGVmmc236jlPTZXPcBRQcVOWoK1IJhb1dAjtb4lQ=="
-                        crossorigin="anonymous" referrerpolicy="no-referrer" />
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-                    <script
-                        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"
-                        integrity="sha512-s5u/JBtkPg+Ff2WEr49/cJsod95UgLHbC00N/GglqdQuLnYhALncz8ZHiW/LxDRGduijLKzeYb7Aal9h3codZA=="
-                        crossorigin="anonymous" referrerpolicy="no-referrer"></script> --}}
-
-
                     <script>
                         $(document).ready(function() {
                             flatpickr('.datetime', {
@@ -55,28 +39,48 @@
 
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+                    <link rel="stylesheet" type="text/css"
+                        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+                    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+                    <script type="text/javascript"
+                        src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js">
+                    </script>
+                    <link rel="stylesheet" type="text/css"
+                        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+                    <style>
+                        body {
+                            background: #0083B0;
+                            background: -webkit-linear-gradient(to right, #0083B0, #00B4DB);
+                            background: linear-gradient(to right, #0083B0, #00B4DB);
+                            min-height: 100vh;
+                        }
+
+                        .form-control::placeholder {
+                            font-style: italic;
+                            font-size: 0.85rem;
+                            color: #aaa;
+                        }
+                    </style>
+
+
                     <form method="post" action="{{ route('save') }}" class="mt-6 space-y-6"
                         enctype="multipart/form-data">
                         @csrf
-                        <div>
-                            {{--
-                            <x-input-label for="name" :value="__('Name')" /> --}}
+
+                        {{-- <div>
                             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full hidden" required
                                 autofocus autocomplete="name" value="{{ Auth::user()->name }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                         </div>
 
                         <div>
-                            {{--
-                            <x-input-label for="cid" :value="__('CID')" /> --}}
                             <x-text-input id="cid" name="cid" type="text" class="mt-1 block w-full hidden" required
                                 autofocus autocomplete="cid" value="{{ Auth::user()->cid }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('cid')" />
                         </div>
 
                         <div>
-                            {{--
-                            <x-input-label for="email" :value="__('Email')" /> --}}
                             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full hidden" required
                                 autocomplete="username" value="{{ Auth::user()->email }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('email')" />
@@ -84,11 +88,21 @@
                         </div>
 
                         <div>
-                            {{--
-                            <x-input-label for="contact" :value="__('Contact')" /> --}}
                             <x-text-input id="contact" name="contact" type="text" class="mt-1 block w-full hidden"
                                 required autofocus autocomplete="contact" value="{{ Auth::user()->contact }}" />
                             <x-input-error class="mt-2" :messages="$errors->get('contact')" />
+                        </div> --}}
+
+                        <div class="mt-4">
+                            <x-input-label for="requester" :value="__('Requester')" />
+                            <select id="dc" class="block mt-1 w-full" name="requester" required autofocus>
+                                <option value="" disabled selected>Select requester</option>
+                                <option value="{{Auth::user()->id}}">{{Auth::user()->name}} ({{$org_name}})</option>
+                                @foreach($add_users as $usr)
+                                <option value="{{ $usr->user_id }}">{{ $usr->name }} ({{$usr->organization}})</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('requester')" class="mt-2" />
                         </div>
 
                         <div class="mt-4">
@@ -127,7 +141,7 @@
                         </div>
 
                         <div class="flex flex-col">
-                            <div class="flex flex-col items-end">
+                            <div class="flex flex-col items-start">
                                 <!-- Flex direction set to column and items to end for labels to appear in front -->
                                 <div class="mb-1">
                                     <x-input-label for="organization" :value="__('Approximate Visit Date & Time')"
@@ -148,7 +162,7 @@
                             </div>
                         </div>
                         {{-- Addtional users --}}
-                        <div class="mt-4">
+                        {{-- <div class="mt-4">
                             <x-input-label for="users" :value="__('Additional users')" />
                             <select id="users" class="js-example-basic-multiple block mt-1 w-full" name="users[]"
                                 multiple>
@@ -156,7 +170,27 @@
                                 <option value="{{$usr->id}}">{{$usr->name}} ({{$usr->organization}})</option>
                                 @endforeach
                             </select>
+                        </div> --}}
+
+                        <!-- This is for add more visitor -->
+                        <div class="mt-4">
+                            <x-input-label for="add_users" :value="__('Additional users')" />
+                            <!--  Bootstrap table-->
+                            <div class="table-responsive">
+                                <table class="table">
+                                    {{-- <thead>
+                                    </thead> --}}
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Add rows button-->
+                            <a class="btn btn-outline-info rounded-0" id="insertRow" href="#">Add Visitor <b
+                                    style="color:black">&#x002B;</b></a>
                         </div>
+                        
                         <div>
                             <x-input-label for="reason" :value="__('Purpose of Visit')" />
                             <textarea id="reason" name="reason" type="text" class="mt-1 block w-full" required autofocus
@@ -215,6 +249,42 @@
                         });
                     </script>
                     @endif
+
+                    <script>
+                        $(function () {
+                            // Start counting from the third row
+                            var counter = 1;
+                        
+                            $("#insertRow").on("click", function (event) {
+                                event.preventDefault();
+                        
+                                var newRow = $("<tr>");
+                                var cols = '';
+                        
+                                // Table columns
+                                // cols += '<th scrope="row">' + counter + '</th>';
+                                cols += '<td><span class="input-group-addon">Name</span><input class="form-control rounded-0" type="text" name="vname[]" placeholder="Name" required></td>';
+                                cols += '<td><span class="input-group-addon">CID</span><input class="form-control rounded-0" type="text" name="vcid[]" placeholder="CID" required></td>';
+                                cols += '<td><span class="input-group-addon">Organization</span><input class="form-control rounded-0" type="text" name="vorg[]" placeholder="Organization" required></td>';
+                                cols += '<td><label></label> </span><button class="btn btn-danger rounded-0" id ="deleteRow"><i class="fa fa-trash"></i></button</td>';
+                        
+                                // Insert the columns inside a row
+                                newRow.append(cols);
+                        
+                                // Insert the row inside a table
+                                $("table").append(newRow);
+                        
+                                // Increase counter after each row insertion
+                                // counter++;
+                            });
+                        
+                            // Remove row when delete btn is clicked
+                            $("table").on("click", "#deleteRow", function (event) {
+                                $(this).closest("tr").remove();
+                                // counter -= 1
+                            });
+                        });
+                    </script>
 
                 </div>
             </div>

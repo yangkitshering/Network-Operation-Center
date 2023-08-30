@@ -22,7 +22,7 @@
                                 <tr>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
-                                    <th>Purpose of Visit</th>
+                                    <th>Purpose</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -34,7 +34,8 @@
                                 <tr>
                                     <td>{{$res->org_name}}</td>
                                     <td>{{$res->rack_name}}</td>
-                                    <td>{{$res->reason}}</td>
+                                    <td>{{'Access Request'}}</td>
+                                    @if($res->exited == 0)
                                     @if ($res->status == 'A')
                                     <td>{{'Approved'}}</td>
                                     @elseif($res->status == 'I')
@@ -42,7 +43,9 @@
                                     @else
                                     <td>{{'Rejected'}}</td>
                                     @endif
-
+                                    @else
+                                    <td>{{'Exited'}}</td>
+                                    @endif
                                     <td>
                                         <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
                                             <i class="far fa-edit"></i>

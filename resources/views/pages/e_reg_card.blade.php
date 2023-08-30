@@ -82,6 +82,11 @@
             height: 100px;
             width: 100px;
         }
+
+        .light-hr {
+            border-color: #ccc;
+            /* Set the border color to a lighter shade */
+        }
     </style>
 </head>
 
@@ -115,16 +120,25 @@
                         $approval->visitTo }}</p>
                     <p><strong>Purpose of visit:</strong> {{ $approval->reason }}</p>
                     <br>
+                    @if(count($additional_user) != 0)
                     <p><strong>Additional Visitors Details:</strong> </p>
                     @foreach($additional_user as $user)
                     <p><b>Name:</b> {{ $user->name }}, <b>CID:</b> {{ $user->cid }}, <b>Organization:</b> {{
                         $user->organization }}</p>
                     @endforeach
+                    @endif
 
                     <p><strong>Remark*</strong><i> Kindly produce your individual CID during your visit.</i></p>
                 </div>
                 <p>Approved By:</p>
                 <p>NOC Manager</p>
+                <br>
+                <hr class="light-hr">
+
+                <p><strong>Focal Person:</strong> </p>
+                <p><strong>Name:</strong> {{ $approval->focal_person }},
+                    &nbsp;<strong>Contact:</strong> {{ $approval->focal_contact }}</p>
+
 
                 <p><b>Note*</b><i>Kindly notify the on-duty NOC staff when you exit NOC room. Failure to do so may
                         result in your

@@ -8,7 +8,7 @@
                 <div class="max-w-xl">
                     <header>
                         <h2 class="text-lg font-medium text-gray-900">
-                            {{ __('User update') }}
+                            {{ __('User View') }}
                         </h2>
                     </header>
 
@@ -90,6 +90,7 @@
 
                         <div class="flex items-center gap-4">
                             {{-- <x-primary-button name="flag" value="1">{{ __('Approve') }}</x-primary-button> --}}
+                            @method('PUT')
                             <button type="submit" class="btn btn-success" name="flag" value="1">Approve</button>
                             <button type="button" class="btn btn-danger reject-button open_Modal"
                                 value="{{ $user->id }}">Reject</button>
@@ -152,6 +153,7 @@
                         </div>
                         <div class="form-group col-md-4">
                             @csrf
+                            @method('PUT')
                             <button type="submit" class="form-control btn-info" id="submitBtn" value="0"
                                 name='flag'>Submit</button>
                         </div>

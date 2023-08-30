@@ -21,8 +21,8 @@ class RackSeeder extends Seeder
                 'org_id' => 3
             ],
             [
-                'rack_no' => 'Rack-2',
-                'rack_name' => 'NOC Server rack',
+                'rack_no' => 'DrukREN-Rack',
+                'rack_name' => 'Druk REN Server rack',
                 'desc' => 'this is description',
                 'org_id' => 1,
             ],
@@ -43,6 +43,12 @@ class RackSeeder extends Seeder
                 'rack_name' => 'Druk REN Server rack',
                 'desc' => 'this is description',
                 'org_id' => 1
+            ],
+            [
+                'rack_no' => 'NGN Rack',
+                'rack_name' => 'NGN Server rack',
+                'desc' => 'this is description',
+                'org_id' => 4
             ],
             ];
 

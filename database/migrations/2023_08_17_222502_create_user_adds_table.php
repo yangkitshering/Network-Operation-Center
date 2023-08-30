@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('cid');
             $table->integer('client_org');
             $table->string('organization');
+            $table->integer('dc_id');
             $table->string('email');
             $table->string('contact');
             $table->boolean('verified')->default(0);

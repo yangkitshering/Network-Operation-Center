@@ -55,7 +55,7 @@
 
                                     @if(Auth::user()->hasRole('admin'))
                                     <td>
-                                        <form action="user_action/{{ $user->id }}" method="post">
+                                        <form action="user_pending/{{ $user->id }}" method="post">
 
                                             <a href="user_pending/{{ $user->id }}" class="btn btn-primary btn-sm">
                                                 <i class="far fa-edit"></i>
@@ -72,22 +72,17 @@
                                                 id="openModal" value="{{$user->id}}">
                                                 <i class="far fa-trash-alt"></i>
                                                 &#x2718;Reject</button>
-
-                                            {{-- <button type="button" class="btn btn-info btn-sm" id="openModel">
-                                                <i class="far fa-edit"></i>
-                                                &#x1F441;Open model</button> --}}
                                         </form>
 
                                     </td>
                                     @endif
                                 </tr>
                                 @endforeach
-
                             </tbody>
                             @else
                             <tbody>
                                 <tr>
-                                    <td colspan="9" allign="center">No Users</td>
+                                    <td colspan="9" align="center">No Registration Request</td>
                                 </tr>
                             </tbody>
                             @endif
@@ -146,12 +141,10 @@
                         </div>
                         <div class="form-group col-md-4">
                             @csrf
+                            @method('PUT')
                             <button type="submit" class="form-control btn-info" id="submitBtn" value="0"
                                 name='flag'>Submit</button>
                         </div>
-                        {{-- <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div> --}}
                     </form>
                     @endif
                 </div>

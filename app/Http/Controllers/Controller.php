@@ -24,11 +24,4 @@ class Controller extends BaseController
             return redirect(RouteServiceProvider::HOME);
         }
     }
-
-    //update status on exit
-    public function user_redirect_to_login()
-    { 
-            return redirect('login');
-        
-    }
 }

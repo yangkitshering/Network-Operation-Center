@@ -43,7 +43,9 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch registered users count from the database
-                                                    $registeredUsersCount = DB::table('registrations')->count();
+                                                    $registeredUsersCount = DB::table('registrations')
+                                                    ->where('dc', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $registeredUsersCount;
                                                     ?>
                                                     <p>Total Requests</p>
@@ -62,7 +64,9 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch approved users count from the database
-                                                    $approvedUsersCount = DB::table('registrations')->where('status', 'A')->count();
+                                                    $approvedUsersCount = DB::table('registrations')
+                                                    ->where('dc', Auth::user()->dc_id)
+                                                    ->where('status', 'A')->count();
                                                     echo $approvedUsersCount;
                                                     ?>
                                                     <p>Approved Requests</p>
@@ -81,7 +85,10 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch pending users count from the database
-                                                    $pendingUsersCount = DB::table('registrations')->where('status', 'I')->count();
+                                                    $pendingUsersCount = DB::table('registrations')
+                                                    ->where('status', 'I')
+                                                    ->where('dc', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $pendingUsersCount;
                                                     ?>
                                                     <p>Pending Requests</p>
@@ -100,7 +107,10 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch rejected users count from the database
-                                                    $rejectedUsersCount = DB::table('registrations')->where('status', 'R')->count();
+                                                    $rejectedUsersCount = DB::table('registrations')
+                                                    ->where('status', 'R')
+                                                    ->where('dc', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $rejectedUsersCount;
                                                     ?>
                                                     <p>Rejected Requests</p>
@@ -114,26 +124,6 @@
                                         </div>
                                         <!-- ./col -->
                                     </div>
-                                    <!-- /.row -->
-                                    <!-- Main row -->
-                                    {{-- <div class="row">
-                                        <!-- Left col -->
-                                        <div>
-                                            <br>
-                                            <p>
-                                            <h2>Welcome to Our Network Operation Center (NOC) </h2>
-
-                                            At Bhutan Telecom, we pride ourselves on providing cutting-edge
-                                            Network Operation Center (NOC) solutions to businesses of all sizes.
-                                            Our NOC is the nerve center of your network infrastructure, ensuring smooth
-                                            operations, proactive monitoring, and rapid incident response. With our
-                                            expert team and state-of-the-art technology, we guarantee exceptional
-                                            network performance and uninterrupted connectivity.</p>
-
-
-                                        </div>
-                                    </div> --}}
-                                    <!-- /.row -->
                                 </div>
                                 <!-- /.container-fluid -->
                                 <br>
@@ -149,7 +139,9 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch registered users count from the database
-                                                    $registeredUsersCount = DB::table('users')->count();
+                                                    $registeredUsersCount = DB::table('users')
+                                                    ->where('users.dc_id', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $registeredUsersCount;
                                                     ?>
                                                     <p>Total Registration Requests</p>
@@ -168,7 +160,10 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch approved users count from the database
-                                                    $approvedUsersCount = DB::table('users')->where('status', 'A')->count();
+                                                    $approvedUsersCount = DB::table('users')
+                                                    ->where('status', 'A')
+                                                    ->where('users.dc_id', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $approvedUsersCount;
                                                     ?>
                                                     <p>Approved Registration Requests</p>
@@ -187,7 +182,10 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch pending users count from the database
-                                                    $pendingUsersCount = DB::table('users')->where('status', 'I')->count();
+                                                    $pendingUsersCount = DB::table('users')
+                                                    ->where('status', 'I')
+                                                    ->where('users.dc_id', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $pendingUsersCount;
                                                     ?>
                                                     <p>Pending Registration Requests</p>
@@ -206,7 +204,10 @@
                                                 <div class="inner">
                                                     <?php
                                                     // Fetch rejected users count from the database
-                                                    $rejectedUsersCount = DB::table('users')->where('status', 'R')->count();
+                                                    $rejectedUsersCount = DB::table('users')
+                                                    ->where('status', 'R')
+                                                    ->where('users.dc_id', Auth::user()->dc_id)
+                                                    ->count();
                                                     echo $rejectedUsersCount;
                                                     ?>
                                                     <p>Rejected Registration Requests</p>

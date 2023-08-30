@@ -71,14 +71,7 @@
                                     <th>Purpose of Visit</th>
                                     <td>{{ $requests->reason }}</td>
                                 </tr>
-                                {{-- <tr>
-                                    <th>Visit From</th>
-                                    <td>{{ $requests->visitFrom }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Visit To</th>
-                                    <td>{{ $requests->visitTo }}</td>
-                                </tr> --}}
+
                                 <tr>
                                     <th>Approximate Date & Time</th>
                                     <td class="pr-1"> <b>From:&nbsp;</b> {{ $requests->visitFrom }}</td>
@@ -98,22 +91,25 @@
 
                                 <tr>
                                     <th>Status</th>
+                                    @if($requests->exited == 0)
                                     @if($requests->status == 'I')
                                     <td>{{'Pending'}}</td>
-                                    @elseif ($requests->status == 'A')
+                                    @elseif($requests->status == 'A')
                                     <td>{{'Approved'}}</td>
                                     @else
                                     <td>{{'Rejected'}}</td>
                                     @endif
-                                </tr>
-                                {{-- <tr>
-                                    <th>Exited</th>
-                                    @if($requests->exited == 0)
-                                    <td>{{'No'}}</td>
                                     @else
-                                    <td>{{'Yes'}}</td>
+                                    <td>{{'Exited'}}</td>
                                     @endif
-                                </tr> --}}
+                                </tr>
+                                @if($requests->status == 'R')
+                                <tr>
+                                    <th>Reject Reason</th>
+                                    <td>{{$requests->reject_reason}}</td>
+                                </tr>
+                                @endif
+
                                 @if(Auth::user()->hasRole('admin'))
                                 @if($requests->status == 'I')
                                 <tr>
@@ -123,19 +119,10 @@
                                             <form id="approve-form" method="POST"
                                                 action="{{ route('approve_reject', $requests->id) }}"
                                                 class="approval-form">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-success approve-button" value="1"
-                                                    name='flag'>Approve</button>
+                                                
+                                                <button type="button" class="btn btn-success openApprove" id="openApprove"
+                                                value="{{ $requests->id }}"> Approve</button>
                                             </form>
-                                            {{-- <form id="reject-form" method="POST"
-                                                action="{{ route('approve_reject', $requests->id) }}"
-                                                class="approval-form">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-danger reject-button" value="0"
-                                                    name='flag'>Reject</button>
-                                            </form> --}}
                                             <button type="button" class="btn btn-danger reject-button openReasonModal"
                                                 value="{{ $requests->id }}">Reject</button>
                                         </div>
@@ -179,6 +166,52 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function () {
+            $('.openApprove').click(function (e) {
+                e.preventDefault();
+                var id = $(this).val();
+                $('#reg_id').val(id);
+                $('#showModalApprove').modal('show');
+            });
+        });
+    </script>
+
+    <!-- Modal for Approval -->
+    <div class="modal fade" id="showModalApprove" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{-- @if(count($requests)) --}}
+                    <form action="{{ route('approve_reject', $requests->id) }}" method="post">
+                        @csrf
+                        <b><p align="center">NOC Focal Contact</p></b>
+                        <input type="hidden" id="reg_id" name="reg_id">
+                        <div class="form-group">
+                            <label for="focal_person">Focal Person:</label>
+                            <input type="text" class="form-control" id="focal_person" name="focal_person" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="focal_contact">Focal Contact:</label>
+                            <input type="text" class="form-control" id="focal_contact" name="focal_contact" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="form-control btn-info" id="submitApproveBtn" value="1" name="flag">
+                                Approve
+                            </button>
+                        </div>
+                    </form>
+                    {{-- @endif --}}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="showReasonModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

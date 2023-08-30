@@ -13,11 +13,11 @@
           <section class="cd-intro">
             <h1 class="wow fadeInUp animated cd-headline slide" data-wow-delay=".4s">
               <span>Network Operation Center (NOC)</span><br>
-              <span class="cd-words-wrapper">
+              {{-- <span class="cd-words-wrapper">
                 <b class="is-visible">Register Your Request</b>
                 <b>Wait for Approval</b>
                 <b>Receive Confirmation</b>
-              </span>
+              </span> --}}
             </h1>
           </section> <!-- cd-intro -->
           <!-- /.slider -->

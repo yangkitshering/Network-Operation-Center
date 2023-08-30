@@ -25,6 +25,7 @@
             <x-input-label for="cid" :value="__('CID Number')" />
             <x-text-input id="cid" class="block mt-1 w-full" type="number" name="cid" :value="old('cid')" required
                 autofocus autocomplete="cid" maxlength="11" />
+            <span id="cid-error" style="color: red;"></span>
             <x-input-error :messages="$errors->get('cid')" class="mt-2" />
         </div>
 
@@ -111,6 +112,8 @@
         </div>
 
         <script>
+            const inputElement_cid = document.getElementById('cid');
+            const phoneErrorElement_cid = document.getElementById('cid-error');
             const inputElement = document.getElementById('contact');
             const phoneErrorElement = document.getElementById('phone-error');
     
@@ -124,6 +127,19 @@
                     phoneErrorElement.textContent = '';
                 } else {
                     phoneErrorElement.textContent = 'Invalid mobile number. Please start with 16 or 17 and use 8 digits.';
+                }
+            });
+
+            inputElement_cid.addEventListener('blur', function() {
+                
+                const inputValue = inputElement_cid.value.trim();
+                const isValid = inputValue.length === 11;
+    
+                // Update error message based on validation result
+                if (isValid) {
+                    phoneErrorElement_cid.textContent = '';
+                } else {
+                    phoneErrorElement_cid.textContent = 'CID should be 8 digits numbers.';
                 }
             });
         </script>

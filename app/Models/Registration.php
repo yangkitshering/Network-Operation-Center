@@ -22,6 +22,10 @@ class Registration extends Model
         'visitTo',
         'exited',
         'status',
+        'requester_ref',
         'passport_path',
+        'reject_reason',
+        'focal_name',
+        'focal_contact',
     ];
 }

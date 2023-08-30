@@ -61,7 +61,7 @@
         <p>&nbsp;<strong>Contact No:</strong>{{$mail_data['contact']}}</p>
     </div>
 
-    &nbsp;<a href="{{ route('newUser.approval') }}" target="_blank"
+    &nbsp;<a href="{{ route('approval.process') }}" target="_blank"
         style="background-color: #4ca8af; color: white; padding: 15px 25px; text-align: center; display: inline-block; text-decoration: none; font-size: 16px; border-radius: 4px; border: none;">{{
         __('Login to portal for approval') }}</a>
 </body>

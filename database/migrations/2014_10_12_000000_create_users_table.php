@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('cid');
             $table->integer('organization');
+            $table->integer('dc_id');
             $table->string('email')->unique();
             $table->string('contact');
             $table->timestamp('email_verified_at')->nullable();

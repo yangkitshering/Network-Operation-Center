@@ -3,13 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Controller;
-
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SmsController;
-use App\Http\Controllers\MailController;
-use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,100 +19,78 @@ use App\Http\Controllers\UserController;
 |
 */
 
-
-// --- Index/Landing Page ----
+// loading index/landing Page
 Route::get('/', [Controller::class, 'index'])->name('index');
 
-// routes for authenticated users with role (user & admin)
-Route::middleware(['auth', 'verified'])->group(function(){
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    Route::get('/registration', [AdminController::class, 'register'])->name('registration');
-    Route::post('/save', [AdminController::class, 'save'])->name('save');
-    Route::get('/view-request/{id}', [AdminController::class, 'viewRequest']);
+// routes only for authenticated role user
+Route::middleware(['auth', 'verified','role:user'])->group(function(){
+    Route::get('/registration', [UserController::class, 'register'])->name('registration');
+    Route::post('/save', [UserController::class, 'save'])->name('save');
+    Route::get('/my_request', [UserController::class, 'my_request'])->name('user_request');
+    Route::get('/ticket', [UserController::class, 'ticket'])->name('ticket');
+    Route::post('/raiseTicket', [UserController::class, 'saveTicket'])->name('saveTicket');
+    
+    Route::get('manage_users/add_user/{id}', [UserController::class, 'edit_adduser']);
+    Route::post('manage_users/edit_adduser/{id}', [UserController::class, 'update_adduser']) -> name('useradd-update');
+    Route::delete('manage_users/delete_adduser/{id}', [UserController::class, 'delete_adduser']);
+});
 
-    Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
+// routes only for authenticated role admin
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
+    Route::put('/process_request/{id}', [AdminController::class, 'processRequest'])->name('approve_reject');
+    Route::get('/user_pending', [AdminController::class, 'pending_user'])->name('user-pending');
+    Route::get('/user_pending/{id}', [AdminController::class, 'view_user'])->name('user-view');
+
     Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
     Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
     Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
 
-    // Route::get('/view-user/{id}', [AdminController::class, 'view_user']);
-});
-
-// routes only for authenticated role (user)
-Route::middleware(['auth', 'verified','role:user'])->group(function(){
-    Route::get('/ticket', [UserController::class, 'ticket'])->name('ticket');
-    Route::post('/raiseTicket', [UserController::class, 'saveTicket'])->name('saveTicket');
-    Route::get('/my_request', [UserController::class, 'my_request'])->name('user_request');
-
-    Route::get('manage_users/add_user/{id}', [AdminController::class, 'edit_adduser']);
-    Route::post('manage_users/edit_adduser/{id}', [AdminController::class, 'update_adduser']) -> name('useradd-update');
-    Route::delete('manage_users/{id}', [AdminController::class, 'delete_adduser']);
-
-});
-
-// routes only for authenticated role (admin)
-Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
-    Route::put('/process_request/{id}', [AdminController::class, 'processRequest'])->name('approve_reject');
-    // Route::get('/pendingList', [AdminController::class, 'index'])->name('pendingList');
+    Route::put('user_pending/{id}', [AdminController::class, 'user_approve_reject'])->name('user-approval-reject');
+    // Route::put('user_action/{id}', [AdminController::class, 'user_approve_reject'])->name('user-action');
     Route::get('/pendingList', [AdminController::class, 'pending'])->name('pendingList');
     Route::get('/approvedList', [AdminController::class, 'approved'])->name('approvedList');
     Route::get('/ticketList', [AdminController::class, 'displayTicket'])->name('showTickets');
     Route::get('/ticketView/{id}', [AdminController::class, 'viewTicket']);
     Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close');
+    Route::put('/exited/{id}', [AdminController::class, 'exit_now'])->name('exit-now');    
 
-    Route::get('/user_pending', [AdminController::class, 'pending_user'])->name('user-pending');
-    Route::get('/user_pending/{id}', [AdminController::class, 'view_user'])->name('user-view');
-    Route::post('user_pending/{id}', [AdminController::class, 'user_approve_reject'])->name('user-approval-reject');
-    Route::put('user_action/{id}', [AdminController::class, 'user_approve_reject'])->name('user-action');
+    //Approval route on clicking the mail link
+    Route::get('/redirect-login', [AdminController::class, 'process'])->name('approval.process');
 
-    Route::put('/exited/{id}', [AdminController::class, 'exit_now'])->name('exit-now');
+    //setting routes
+    Route::get('/app_setting', [AdminController::class, 'setting'])->name('manage-setting');
+    Route::get ('/add_dc', [AdminController::class, 'add_dc'])->name('add_dc');
+    Route::post('/save_dc', [AdminController::class, 'save_dc'])->name('save_dc');
 
-    // Route::post('reject_user/{id}', [AdminController::class, 'user_reject'])->name('user-reject');
-    
-    
+    Route::get ('/add_racklist', [AdminController::class, 'add_racklist'])->name('add_racklist');
+    Route::post('/save_racklist', [AdminController::class, 'save_racklist'])->name('save_racklist');
 
-    // Route::get('/manage_users', [AdminController::class, 'manage'])->name('manage-user');
-    // Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
-    // Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
-    // Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
+    Route::get ('/add_organization', [AdminController::class, 'add_organization'])->name('add_organization');
+    Route::post('/save_organization', [AdminController::class, 'save_organization'])->name('save_organization');
 });
 
-//Approval route on clicking the mail link
-Route::get('/approval_reject', [ApprovalController::class, 'process'])->name('approval.process');
+// routes for authenticated users with role user & admin
+Route::middleware(['auth', 'verified'])->group(function(){
+    Route::get('/dashboard', [CommonController::class, 'index'])->name('dashboard');
+    Route::get('/view-request/{id}', [CommonController::class, 'viewRequest']);
+    Route::get('/manage_users', [CommonController::class, 'manage'])->name('manage-user');
 
-//new user approval mail link
-Route::get('/newUser_approval', [ApprovalController::class, 'new_user_approve'])->name('newUser.approval');
+    //add new user routes
+    Route::get('/add_user', [CommonController::class, 'add'])->name('add_user');
+    Route::post('/save_user', [CommonController::class, 'add_user'])->name('save_user');
+});
 
-//exit route on clicking the mail link
-Route::get('/exit-entry', [Controller::class, 'user_redirect_to_login'])->name('exit.redirect');
-// Route::get('/exit-entry/{id}', [Controller::class, 'exit'])->name('exit');
+    //auth routes
+    require __DIR__.'/auth.php';
 
+    //routes for feedback
+    Route::get('/feedback', [HomeController::class, 'feedback'])->name('feedback');
+    Route::post('/save_feedback', [HomeController::class, 'saveFeedback'])->name('save-feedback');
+
+//profile route
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
    
 });
-
-//auth routes
-require __DIR__.'/auth.php';
-
-//for users unauthenticated only
-// Route::post('/save_request', [HomeController::class, 'save_request'])->name('save.register');
-Route::get('/feedback', [HomeController::class, 'feedback'])->name('feedback');
-Route::post('/save_feedback', [HomeController::class, 'saveFeedback'])->name('save-feedback');
-
-//add user routes
-Route::get('/add_user', [AdminController::class, 'add'])->name('add_user');
-// Save new user
-Route::post('/save_user', [AdminController::class, 'add_user'])->name('save_user');
-
-//SMS &mail
-// Route::get('/sms', [SmsController::class, 'sms']);
-// Route::get('send-mail', [MailController::class, 'index']);
-
-// Route::get ('/user', [HomeController::class, 'index'])->name('user');
-// Route::group(['middleware'=> 'role:admin'], function(){
-//     Route::get ('/admin', [AdminController::class, 'index'])->name('admin');
-    
-// });

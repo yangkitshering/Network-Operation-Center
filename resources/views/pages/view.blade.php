@@ -189,17 +189,21 @@
                     {{-- @if(count($requests)) --}}
                     <form action="{{ route('approve_reject', $requests->id) }}" method="post">
                         @csrf
-                        <b><p align="center">NOC Focal Contact</p></b>
+                        <p align="center"><b>DC NOC Focal Contact</b></p>
                         <input type="hidden" id="reg_id" name="reg_id">
-                        <div class="form-group">
-                            <label for="focal_person">Focal Person:</label>
-                            <input type="text" class="form-control" id="focal_person" name="focal_person" required>
+                        <!-- DC Focal list-->
+                        <div class="mt-4">
+                            <x-input-label for="dc_id" :value="__('DC NOC Focal Person')" />
+                            <select id="focal" class="block mt-1 w-full" name="focal_id" required autofocus>
+                                <option value="" disabled selected>Select DC Focal Person</option>
+                                @foreach($focals as $focal)
+                                <option value="{{ $focal->id }}">{{ $focal->focal_name}}</option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('organization')" class="mt-2"   />
                         </div>
-                        <div class="form-group">
-                            <label for="focal_contact">Focal Contact:</label>
-                            <input type="text" class="form-control" id="focal_contact" name="focal_contact" required>
-                        </div>
-                        <div class="form-group col-md-4">
+
+                        <div class="form-group col-md-4 mt-4">
                             @csrf
                             @method('PUT')
                             <button type="submit" class="form-control btn-info" id="submitApproveBtn" value="1" name="flag">

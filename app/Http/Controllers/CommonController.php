@@ -68,7 +68,12 @@ class CommonController extends Controller
         ->where('visitors.reg_id', '=', $id)
         ->get();
 
-        return view('pages.view', compact('requests', 'visitors'));
+        $focals = DB::table('dc_focals as f')
+                  ->select('f.*')
+                  ->where('f.dc_id', Auth::user()->dc_id)
+                  ->get();
+
+        return view('pages.view', compact('requests', 'visitors', 'focals'));
     }
 
     /**

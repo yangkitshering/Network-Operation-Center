@@ -19,8 +19,8 @@
                         <form method="POST" action="{{ route('save_organization') }}" enctype="multipart/form-data">
                             @csrf
 
-                             {{-- DC list dropdown --}}
-                             <div class="mt-4">
+                            <!-- DC list dropdown -->
+                            <div class="mt-4">
                                 <x-input-label for="dc_id" :value="__('Data Center')" />
                                 <select id="dc_id" class="block mt-1 w-full" name="dc_id" required autofocus>
                                     <option value="" disabled selected>Select Data Center</option>
@@ -29,7 +29,7 @@
                                     @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('organization')" class="mt-2"   />
-                                </div>
+                            </div>
 
                             <!-- Name -->
                             

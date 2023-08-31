@@ -67,6 +67,9 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
 
     Route::get ('/add_organization', [AdminController::class, 'add_organization'])->name('add_organization');
     Route::post('/save_organization', [AdminController::class, 'save_organization'])->name('save_organization');
+
+    Route::get ('/add_focal', [AdminController::class, 'add_focal'])->name('add_focal');
+    Route::post('/save_focal', [AdminController::class, 'save_focal'])->name('save_focal');
 });
 
 // routes for authenticated users with role user & admin

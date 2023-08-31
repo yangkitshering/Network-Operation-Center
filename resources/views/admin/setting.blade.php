@@ -125,7 +125,47 @@
                                 </tbody>
                             </table>
                         </section>
+                        <br>
+                        <section>
+                            <header>
+                                <h2 class="text-lg font-medium text-gray-900 text-center">
+                                    {{ __('DC NOC Focal') }}
+                                </h2>
+                            </header>
+                            <br>
 
+                            <div class="input-group">
+                                <a href="{{ route('add_focal')}}">
+                                    <button type="submit" class="btn btn-info" style="font-size: 13">
+                                        <i class="fas fa-user-plus"></i>
+                                        Add NOC Focal
+                                    </button>
+                                </a>
+                            </div>
+                            <br>
+                            <table border="1" id="manage_user" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>UID</th>
+                                        <th>Focal Person Name</th>
+                                        <th>Focal Person Contact</th>
+                                        <th>Focal Person DC</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach ($focal_list as $focal)
+                                    <tr>
+                                        <td>{{ $focal->id }}</td>
+                                        <td>{{ $focal->focal_name }}</td>
+                                        <td>{{ $focal->focal_contact }}</td>
+                                        <td>{{ $focal->dc_name }}</td>
+                                        {{-- <td>{{ $rack->org_name }}</td> --}}
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </section>
                     </div>
                 </div>
             </div>

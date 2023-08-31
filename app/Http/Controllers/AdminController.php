@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Visitor;
 use App\Models\DataCenter;
 use App\Models\RackList;
+use App\Models\DcFocal;
 
 class AdminController extends Controller
 {
@@ -59,7 +60,12 @@ class AdminController extends Controller
             ->where('o.dc_id', '=', Auth::user()->dc_id)
             ->get();
 
-        return view('pages.pending', compact('requests'));
+        $focals = DB::table('dc_focals as f')
+                  ->select('f.*')
+                  ->where('f.dc_id', Auth::user()->dc_id)
+                  ->get();
+
+        return view('pages.pending', compact('requests', 'focals'));
     }
 
     /**
@@ -90,14 +96,15 @@ class AdminController extends Controller
 
         $registration = Registration::where('id', $request->reg_id)->first();
         $requester_name = $registration->name;
+        $dc_focal = DcFocal::where('id', $request->focal_id)->first();
         if($request->flag == 1){
            //Approve
            $mail_data['body'] = 'Your access request is approved. Please refer details in the attached document.';
            $registration->status = 'A';
-           $registration->focal_name = $request->focal_person;
-           $registration->focal_contact = $request->focal_contact;
+           $registration->focal_name = $dc_focal->focal_name;
+           $registration->focal_contact = $dc_focal->focal_contact;
            $msg = 'Access request has been approved';
-           $sms = 'Your access request has been approved. For more please contact '.$request->focal_contact;
+           $sms = 'Your access request has been approved. For more please contact '.$dc_focal->focal_contact;
            $registration->save();  
            $title = 'Approved';
 
@@ -107,7 +114,7 @@ class AdminController extends Controller
            ->get();
            //PDF file part
            $org_name = DB::table('organizations')->where('id', $registration->organization)->value('org_name');
-           $pdf= Pdf::loadView('pages.e_reg_card', compact('approval', 'org_name','additional_user'));
+           $pdf= Pdf::loadView('pages.e_reg_card', compact('registration', 'org_name','additional_user'));
            $pdfFileName = 'eRegistration_' . $requester_name . '_' . time() . '.pdf'; // Generate a unique name
            $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
 
@@ -398,9 +405,13 @@ class AdminController extends Controller
                     ->join('organizations as o', 'r.org_id', 'o.id')
                     ->select('r.*', 'o.org_name')
                     ->get();
+        $focal_list = DB::table('dc_focals as f')
+                    ->join('data_centers as d', 'f.dc_id', 'd.id')
+                    ->select('f.*', 'd.dc_name')
+                    ->get();
         
 
-        return view('admin.setting', compact('dataCenters','org_list','rack_list'));
+        return view('admin.setting', compact('dataCenters','org_list','rack_list', 'focal_list'));
     }
 
     //function to load add dc page
@@ -488,5 +499,30 @@ class AdminController extends Controller
                     ->where('u.dc_id', $dc)
                     ->where('role_user.role_id', 1)
                     ->get();
+    }
+
+    //function to load add dc page
+    public function add_focal()
+    {
+        $dc_list = DataCenter::all();
+        return view('pages.dc_focal', compact('dc_list'));
+    }
+
+    //save dc
+    public function save_focal(Request $request)
+    {
+        $validate = $request->validate([
+            'dc_id' => 'required|integer',
+            'focal_name' => 'required|string',
+            'focal_contact' => 'required|string',
+        ]);
+    
+        $dc_focal = new DcFocal([
+            'focal_name' => $validate['focal_name'],
+            'focal_contact' => $validate['focal_contact'],
+            'dc_id' => $validate['dc_id'],
+        ]);
+        $dc_focal->save();
+        return redirect()->back()->with('success', 'DC focal added successfully!');
     }
 }

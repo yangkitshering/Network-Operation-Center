@@ -27,15 +27,31 @@
                                         <th>UID</th>
                                         <th>DC Name</th>
                                         <th>DC Location</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     @foreach ($dataCenters as $dataCenter)
                                     <tr>
                                         <td>{{ $dataCenter->id }}</td>
                                         <td>{{ $dataCenter->dc_name }}</td>
                                         <td>{{ $dataCenter->dc_location }}</td>
+                                        <td>
+                                            <form action="delete_dc/{{ $dataCenter->id }}" method="post">
+
+                                                <a href="edit_dc/{{ $dataCenter->id }}" class="btn btn-success btn-sm">
+                                                    <i class="far fa-edit"></i>
+                                                    Edit</a>
+
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1"
+                                                    name="flag" value="1">
+                                                    <i class="far fa-trash-alt"></i>
+                                                    Delete</button>
+
+                                            </form>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -66,10 +82,9 @@
                                         <th>Organization Name</th>
                                         <th>Organization Address</th>
                                         <th>Data Center</th>
-
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     @foreach ($org_list as $org)
                                     <tr>
@@ -77,7 +92,22 @@
                                         <td>{{ $org->org_name }}</td>
                                         <td>{{ $org->org_address }}</td>
                                         <td>{{ $org->dc_name}}</td>
+                                        <td>
+                                            <form action="delete_org/{{ $org->id }}" method="post">
 
+                                                <a href="edit_org/{{ $org->id }}" class="btn btn-success btn-sm">
+                                                    <i class="far fa-edit"></i>
+                                                    Edit</a>
+
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1"
+                                                    name="flag" value="1">
+                                                    <i class="far fa-trash-alt"></i>
+                                                    Delete</button>
+
+                                            </form>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -109,9 +139,9 @@
                                         <th>Rack Name</th>
                                         <th>Rack Description</th>
                                         <th>Organization Name</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     @foreach ($rack_list as $rack)
                                     <tr>
@@ -120,6 +150,22 @@
                                         <td>{{ $rack->rack_name }}</td>
                                         <td>{{ $rack->desc }}</td>
                                         <td>{{ $rack->org_name }}</td>
+                                        <td>
+                                            <form action="delete_rack/{{ $rack->id }}" method="post">
+
+                                                <a href="edit_rack/{{ $rack->id }}" class="btn btn-success btn-sm">
+                                                    <i class="far fa-edit"></i>
+                                                    Edit</a>
+
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1"
+                                                    name="flag" value="1">
+                                                    <i class="far fa-trash-alt"></i>
+                                                    Delete</button>
+
+                                            </form>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -150,9 +196,9 @@
                                         <th>Focal Person Name</th>
                                         <th>Focal Person Contact</th>
                                         <th>Focal Person DC</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
-
                                 <tbody>
                                     @foreach ($focal_list as $focal)
                                     <tr>
@@ -160,7 +206,22 @@
                                         <td>{{ $focal->focal_name }}</td>
                                         <td>{{ $focal->focal_contact }}</td>
                                         <td>{{ $focal->dc_name }}</td>
-                                        {{-- <td>{{ $rack->org_name }}</td> --}}
+                                        <td>
+                                            <form action="delete_focal/{{ $focal->id }}" method="post">
+
+                                                <a href="edit_focal/{{ $focal->id }}" class="btn btn-success btn-sm">
+                                                    <i class="far fa-edit"></i>
+                                                    Edit</a>
+
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm delete-confirm ml-1"
+                                                    name="flag" value="1">
+                                                    <i class="far fa-trash-alt"></i>
+                                                    Delete</button>
+
+                                            </form>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>

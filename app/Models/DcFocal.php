@@ -11,6 +11,8 @@ class DcFocal extends Model
     protected $fillable = [
         'focal_name',
         'focal_contact',
+        'focal_email',
         'dc_id',
+        'user_id',
     ];
 }

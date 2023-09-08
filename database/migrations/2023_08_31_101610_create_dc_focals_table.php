@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('focal_name');
             $table->string('focal_contact');
+            $table->string('focal_email');
             $table->integer('dc_id');
+            $table->integer('user_id');
             $table->timestamps();
         });
     }

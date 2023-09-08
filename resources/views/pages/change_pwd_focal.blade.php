@@ -7,37 +7,30 @@
                 <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                     <div class="max-w-xl">
                             <h2 class="text-lg font-medium text-gray-900">
-                                {{ __('Add DataCenter') }}
+                                {{ __('Change Password') }}
                             </h2>
-
-                            {{-- <p class="mt-1 text-sm text-gray-600">
-                                {{ __("Update your account's profile information and email address.") }}
-                            </p> --}}
                         </header>
 
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                        <form method="POST" action="{{ route('save_dc') }}" >
-                            {{-- <form method="post" action="{{ route('save_dc') }}"> --}}
+                        <form method="POST" action="{{ route('save_password') }}" >
                             @csrf
 
-                            <!--DC Name -->
+                            <!--Password -->
                             <div class="mt-4">
-                                <x-input-label for="dc_name" :value="__('DC Name')" />
-                                <x-text-input id="dc_name" class="block mt-1 w-full" type="text" name="dc_name"
-                                    :value="old('dc_name')" required autofocus autocomplete="dc_name" />
-                                <x-input-error :messages="$errors->get('dc_name')" class="mt-2" />
+                                <x-input-label for="password" :value="__('Password')" />
+                                <x-text-input id="password" class="block mt-1 w-full" type="password" name="password"
+                                    :value="old('password')" required autofocus autocomplete="password" />
+                                <x-input-error :messages="$errors->get('password')" class="mt-2" />
                             </div>
 
-                              <!-- DC Location -->
+                              <!-- Confirm Password -->
                               <div class="mt-4">
-                                <x-input-label for="dc_location" :value="__('DC Location')" />
-                                <x-text-input id="dc_location" class="block mt-1 w-full" type="text" name="dc_location"
-                                    :value="old('dc_location')" required autofocus autocomplete="dc_location" />
-                                <x-input-error :messages="$errors->get('dc_location')" class="mt-2" />
+                                <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+                                <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation"
+                                    :value="old('password_confirmation')" required autofocus autocomplete="password_confirmation" />
+                                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                             </div>
-
-                          
 
                             <div class="flex items-center justify-center mt-4">
                                 <x-primary-button class="ml-4">
@@ -56,7 +49,7 @@
                                         confirmButtonText: 'OK'
                                     }).then((result) => {
                                         if(result.isConfirmed){
-                                            window.location.href = "{{ route('manage-setting')}}";
+                                            window.location.href = "{{ route('dashboard')}}";
                                         }
                                     });
                                 });

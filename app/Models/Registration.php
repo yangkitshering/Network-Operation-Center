@@ -25,7 +25,6 @@ class Registration extends Model
         'requester_ref',
         'passport_path',
         'reject_reason',
-        'focal_name',
-        'focal_contact',
+        'focal_id',
     ];
 }

@@ -14,6 +14,8 @@ use App\Models\User;
 use App\Models\UserAdd;
 use App\Models\Registration;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
@@ -74,10 +76,11 @@ class UserController extends Controller
         ->where('organizations.id', '=', Auth::user()->organization)
         ->get();
 
-        $add_users = DB::table('user_adds')
-        ->select('user_adds.*')
-        ->where('user_adds.status', '=', 'A')
-        ->where('user_adds.user_ref_id', '=', Auth::user()->id)
+        $add_users = DB::table('user_adds as au')
+        ->join('users as u', 'au.user_id', 'u.id')
+        ->select('au.*')
+        ->where('u.verified', 1)
+        ->where('u.user_ref_id', '=', Auth::user()->id)
         ->get();
 
         $org_name = DB::table('organizations')->where('id', Auth::user()->organization)->value('org_name');
@@ -146,8 +149,8 @@ class UserController extends Controller
         $mail_data = [
             'title'=> 'Dear Sir/Madam,',
             'body'=> 'The below user has submitted access request for your approval.',
-            'name'=> $request->name,
-            'cid'=> $request->cid,
+            'name'=> $requester_detail->name,
+            'cid'=> $requester_detail->cid,
             'org'=> $org_name,
             'purpose'=> $request->reason,
             'from' => $request->visitFrom,
@@ -172,8 +175,9 @@ class UserController extends Controller
             'to' => $to,
         ]);
         
+        $title = 'Submitted';
         Session::flash('success', 'Request submitted successfully.');
-        return redirect()->back();
+        return redirect()->back()->with(['title'=> $title]);
     }
 
     // function to load users own access request.
@@ -190,10 +194,11 @@ class UserController extends Controller
 
     //edit added user
     public function edit_adduser($id){ 
-        $user = UserAdd::find($id); 
+        $user = UserAdd::where('user_id',$id)->first(); 
+        
         $cid_files = DB::table('user_addcids')
                 ->select('user_addcids.*')
-                ->where('user_addcids.user_add_id', '=', $id)
+                ->where('user_addcids.user_add_id', '=', $user->id)
                 ->get();
                 
         return view('pages.add_user_edit', compact('user', 'cid_files'));
@@ -233,21 +238,31 @@ class UserController extends Controller
         return redirect()->back();
     }
 
-    // method to Delete added user
-    public function delete_adduser( $id, Request $request)
-    {
-        if($request->flag == 1){
-            DB::table('users')->where('id', $id)->delete();
-        }else{
-            $user_id = DB::table('user_adds')->where('id', $id)->value('user_id');
-            DB::table('users')
-                ->where('id', $user_id)
-                ->update(['verified' => false,
-            'status'=> 'D']);
+    //load focal change password page
+    public function change_pwd(){
+        return view('pages.change_pwd_focal');
+    }
 
-            DB::table('user_adds')->where('id', $id)->delete();
-        }   
-        return redirect('manage_users');
+    //save changed password for dc focal user
+    public function save_pwd(Request $request){
+        $validData = $request->validate([
+           'password' => ['required', 'confirmed', Rules\Password::defaults()]
+        ],
+        [
+            'password.required' => 'The password field is required.',
+            'password.confirmed' => 'The password confirmation does not match.',
+        ]);
+
+        $res = User::where('id', Auth::user()->id)->first();
+        $res->password = Hash::make($validData['password']);
+        $res->save();
+        // $request->user()->update([
+        //     'password' => Hash::make($validData['password']),
+        // ])->where('id', Auth::user()->id);
+
+        $msg = 'Password updated successfully.';
+        Session::flash('success', $msg);
+    return redirect()->back();
     }
 
 }

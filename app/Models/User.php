@@ -29,9 +29,8 @@ class User extends Authenticatable
         'password',
         'verified',
         'user_ref_id',
-        'status'
-        // 'file_name',
-        // 'file_path'
+        'status',
+        'is_dcfocal',
     ];
 
     /**

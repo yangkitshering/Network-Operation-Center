@@ -28,8 +28,7 @@ return new class extends Migration
             $table->integer('requester_ref');
             $table->string('passport_path');
             $table->string('reject_reason')->nullable();
-            $table->string('focal_name')->nullable();
-            $table->string('focal_contact')->nullable();
+            $table->integer('focal_id')->nullable();
             $table->timestamps();
         });
     }

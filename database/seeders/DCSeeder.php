@@ -13,21 +13,22 @@ class DCSeeder extends Seeder
      */
     public function run(): void
     {
-        $dc_List = [
-            [
-                'dc_name' => 'Thimphu DC',
-                'dc_location' => 'Thimphu'
-            ],
-            [
-                'dc_name' => 'P/ling DC',
-                'dc_location' => 'Phuntsholing'
-            ],
-            [
-                'dc_name' => 'Jakar DC',
-                'dc_location' => 'Bumthang'
-            ],
-            ];
+        //Thimphu DC
+        DataCenter::create([
+            'dc_name' => 'Thimphu DC',
+            'dc_location' => 'Thimphu, Chubachu'
+        ]);
 
-            DataCenter::insert($dc_List);
+        //Phuntsholing DC
+        DataCenter::create([
+            'dc_name' => 'P/ling DC',
+            'dc_location' => 'Phuntsholing'
+        ]);
+
+        //Jakar DC
+        DataCenter::create([
+            'dc_name' => 'Jakar DC',
+            'dc_location' => 'Bumthang'
+        ]);
     }
 }

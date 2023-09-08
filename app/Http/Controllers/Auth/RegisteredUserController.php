@@ -31,7 +31,10 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $organizations = Organization::all();
+        $organizations = DB::table('organizations as o')
+               ->join('data_centers as d', 'o.dc_id', 'd.id')
+               ->select('o.*', 'd.dc_name')
+               ->get();
 
         return view('auth.register', compact('organizations'));
     }
@@ -86,24 +89,35 @@ class RegisteredUserController extends Controller
             'verified' => 0,
             'user_ref_id' => 0,
             'status' => 'I',
+            'is_dcfocal' => 0,
             'password' => Hash::make($request->password),
         ]);
-        //save to add_user table
-        // UserAdd::create([
-        //     'name' => $request->name,
-        //     'cid' => $request->cid,
-        //     'organization' => $request->organization,
-        //     'email' => $request->email,
-        //     'contact' => $request->contact,
-        //     'verified' => 0,
-        //     'user_id' => $user->id,
-        //     'user_ref_id' => 0,
-        //     'status' => 'I',
-        // ]);
 
-         // Attach CID photos to the user if any were uploaded
-         if (!empty($filePaths)) {
+        // Attach CID photos to the user if any were uploaded
+        if (!empty($filePaths)) {
             $user->cidPhotos()->createMany(array_map(function ($path) {
+                return ['path' => $path];
+            }, $filePaths));
+        }
+
+        //save to add_user table
+        $add_user = UserAdd::create([
+            'name' => $request->name,
+            'cid' => $request->cid,
+            'client_org' => $request->organization,
+            'dc_id' => $org->dc_id,
+            'organization' => $org->org_name,
+            'email' => $request->email,
+            'contact' => $request->contact,
+            'verified' => 0,
+            'user_id' => $user->id,
+            'user_ref_id' => 0,
+            'status' => 'I',
+        ]);
+
+        // Attach CID photos to the user if any were uploaded
+        if (!empty($filePaths)) {
+            $add_user->user_add_cid()->createMany(array_map(function ($path) {
                 return ['path' => $path];
             }, $filePaths));
         }
@@ -132,31 +146,15 @@ class RegisteredUserController extends Controller
             // ->cc('itservices@bt.bt')
             ->send(new UserApproval($mail_data));
 
-            $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
-            $user = "tester";
-            $pass = "foobar";
             $text = "New registration request has been submitted for your approval. Please check your email.";
             $to = "975". $approve->contact;
-            Http::get($kannelApiUrl, [
-                'user' => $user,
-                'pass' => $pass,
-                'text' => $text,
-                'to' => $to,
-            ]);
+            $this->sendSMS($text, $to);
         }
 
         //notify to user
-        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
-            $user = "tester";
-            $pass = "foobar";
-            $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
-            $to = "975". $request->contact;
-            Http::get($kannelApiUrl, [
-                'user' => $user,
-                'pass' => $pass,
-                'text' => $text,
-                'to' => $to,
-            ]);
+        $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
+        $to = "975". $request->contact;
+        $this->sendSMS($text, $to);
 
         return redirect()->route('login')->with('message', "Your registration has been submitted for approval. Please contact nnoc@bt.bt.");
     }
@@ -169,5 +167,18 @@ class RegisteredUserController extends Controller
                     ->where('u.dc_id', $dc)
                     ->where('role_user.role_id', 1)
                     ->get();
+    }
+
+    //function to send sms
+    public function sendSMS($text, $to){
+        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+        $user = "tester";
+        $pass = "foobar";
+        Http::get($kannelApiUrl, [
+            'user' => $user,
+            'pass' => $pass,
+            'text' => $text,
+            'to' => $to,
+        ]);
     }
 }

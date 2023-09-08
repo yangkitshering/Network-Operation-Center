@@ -22,7 +22,7 @@
                                 <tr>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
-                                    <th>Purpose</th>
+                                    <th>Request Type</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>

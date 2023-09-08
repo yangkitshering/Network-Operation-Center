@@ -16,7 +16,7 @@ class AdminSeeder extends Seeder
     {
         //Thimphu DC Admin
         $admin_thimphu_dc = User::create([
-            'name' => 'Administrator (Thimphu DC)',
+            'name' => 'Admin(Thimphu DC)',
             'cid' => '11000000011',
             'organization' => 1,
             'dc_id' => 1,
@@ -25,13 +25,14 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('admin@123'),
             'verified' => 1,
             'user_ref_id' => 0,
-            'status' => 'A'
+            'status' => 'A',
+            'is_dcfocal' => 0
         ]);
         $admin_thimphu_dc->attachRole('admin');
 
         //Phuntsholing DC Admin
         $admin_pling_dc = User::create([
-            'name' => 'Administrator (Pling DC)',
+            'name' => 'Admin(P/ling DC)',
             'cid' => '11000000011',
             'organization' => 2,
             'dc_id' => 2,
@@ -40,13 +41,14 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('admin@123'),
             'verified' => 1,
             'user_ref_id' => 0,
-            'status' => 'A'
+            'status' => 'A',
+            'is_dcfocal' => 0
         ]);
         $admin_pling_dc->attachRole('admin');
 
         //Jakar DC Admin
         $admin_jakar_dc = User::create([
-            'name' => 'Administrator (Jakar DC)',
+            'name' => 'Admin(Jakar DC)',
             'cid' => '11000000011',
             'organization' => 3,
             'dc_id' => 3,
@@ -55,7 +57,8 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('admin@123'),
             'verified' => 1,
             'user_ref_id' => 0,
-            'status' => 'A'
+            'status' => 'A',
+            'is_dcfocal' => 0
         ]);
         $admin_jakar_dc->attachRole('admin');
     }

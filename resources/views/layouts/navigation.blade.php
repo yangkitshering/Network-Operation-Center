@@ -15,7 +15,7 @@
             <!-- Navigation Links -->
 
             <div class="space-x-8 sm:-my-px sm:ml-12 sm:flex">
-                @if(Auth::user()->hasRole('user'))
+                @if(Auth::user()->hasRole('user') && Auth::user()->is_dcfocal == 0)
                 <x-nav-link :href="route('registration')" :active="request()->routeIs('registration')">
                     {{ __('Make Access Request') }}
                 </x-nav-link>
@@ -70,7 +70,7 @@
                     {{ __('Tickets') }}
                 </x-nav-link>
                 @endif
-                @if (Auth::user()->hasRole('user'))
+                @if (Auth::user()->hasRole('user') && Auth::user()->is_dcfocal == 0)
                 <x-nav-link :href="route('user_request')" :active="request()->routeIs('/user_request')">
                     {{ __('View Access Request') }}
                 </x-nav-link>
@@ -78,6 +78,13 @@
                     {{ __('Raise Ticket') }}
                 </x-nav-link>
                 @endif
+
+                @if (Auth::user()->hasRole('user') && Auth::user()->is_dcfocal == 1)
+                <x-nav-link :href="route('approvedList')" :active="request()->routeIs('/approvedList')">
+                    {{ __('Pending Exit Access Request') }}
+                </x-nav-link>
+                @endif
+                
             </div>
 
             <!-- Settings Dropdown -->
@@ -105,13 +112,19 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
                         @endif --}}
-
+                        @if(Auth::user()->is_dcfocal == 0)
                         <x-dropdown-link :href="route('manage-user')">
                             {{ __('User Management') }}
                         </x-dropdown-link>
+                        @endif
                         @if(Auth::user()->hasRole('admin'))
                         <x-dropdown-link :href="route('manage-setting')">
                             {{ __('App Settings') }}
+                        </x-dropdown-link>
+                        @endif
+                        @if(Auth::user()->is_dcfocal == 1)
+                        <x-dropdown-link :href="route('change-pwd')">
+                            {{ __('Change Password') }}
                         </x-dropdown-link>
                         @endif
                         <!-- Authentication -->

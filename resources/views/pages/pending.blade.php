@@ -32,7 +32,7 @@
                                     <th>UID</th>
                                     <th>Organization Name</th>
                                     <th>Rack Name</th>
-                                    <th>Purpose</th>
+                                    <th>Request Type</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -97,7 +97,7 @@
                             Swal.fire({
                                 title: '{{ session('title') }}',
                                 text: '{{ session('success') }}',
-                                icon: 'success',
+                                icon: '{{ session('icon') }}',
                                 confirmButtonText: 'OK'
                             });
                         });

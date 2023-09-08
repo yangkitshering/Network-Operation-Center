@@ -136,8 +136,8 @@
                 <hr class="light-hr">
 
                 <p><strong>Focal Person:</strong> </p>
-                <p><strong>Name:</strong> {{ $registration->focal_name }},
-                    &nbsp;<strong>Contact:</strong> {{ $registration->focal_contact }}</p>
+                <p><strong>Name:</strong> {{ $dc_focal->focal_name }},
+                    &nbsp;<strong>Contact:</strong> {{ $dc_focal->focal_contact }}</p>
 
 
                 <p><b>Note*</b><i>Kindly notify the on-duty NOC staff when you exit NOC room. Failure to do so may

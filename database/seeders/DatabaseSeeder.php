@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call(LaratrustSeeder::class);
+        $this->call(DCSeeder::class);
+        $this->call(OrgSeeder::class);
         $this->call(AdminSeeder::class);
-        // $this->call(DCSeeder::class);
-        // $this->call(OrgSeeder::class);
         // $this->call(RackSeeder::class);
         
     }

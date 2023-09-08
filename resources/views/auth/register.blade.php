@@ -34,8 +34,8 @@
             <x-input-label for="organization" :value="__('Organization Name')" />
             <select id="organization" class="block mt-1 w-full" name="organization" required autofocus>
                 <option value="">Select an organization</option>
-                @foreach($organizations as $organization)
-                <option value="{{ $organization->id }}">{{ $organization->org_name}}</option>
+                @foreach($organizations as $org)
+                <option value="{{ $org->id }}">{{ $org->org_name}} ({{ $org->dc_name}})</option>
                 @endforeach
             </select>
             <x-input-error :messages="$errors->get('organization')" class="mt-2"   />
@@ -139,7 +139,7 @@
                 if (isValid) {
                     phoneErrorElement_cid.textContent = '';
                 } else {
-                    phoneErrorElement_cid.textContent = 'CID should be 8 digits numbers.';
+                    phoneErrorElement_cid.textContent = 'CID should be 11 digits numbers.';
                 }
             });
         </script>

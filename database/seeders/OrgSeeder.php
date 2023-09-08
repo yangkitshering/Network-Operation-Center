@@ -13,29 +13,25 @@ class OrgSeeder extends Seeder
      */
     public function run(): void
     {
-        $dc_List = [
-            [
-                'org_name' => 'Druk REN',
-                'org_address' => 'Thimphu',
-                'dc_id' => 1
-            ],
-            [
-                'org_name' => 'NPPF',
-                'org_address' => 'Thimphu',
-                'dc_id' => 1
-            ],
-            [
-                'org_name' => 'Safe City Project',
-                'org_address' => 'Thimphu',
-                'dc_id' => 1  
-            ],
-            [
-                'org_name' => 'NGN',
-                'org_address' => 'Phuntsholing',
-                'dc_id' => 2
-            ],
-            ];
+        //Thimphu DC client
+        Organization::create([
+            'org_name' => 'NPPF',
+            'org_address' => 'Thimphu',
+            'dc_id' => 1
+        ]);
 
-            Organization::insert($dc_List);
+        //Phuntsholing DC client
+        Organization::create([
+            'org_name' => 'NHDCL',
+            'org_address' => 'Phuntsholing',
+            'dc_id' => 2
+        ]);
+
+        //Jakar DC client
+        Organization::create([
+            'org_name' => 'DITT',
+            'org_address' => 'Bumthang',
+            'dc_id' => 3
+        ]);
     }
 }

@@ -21,6 +21,8 @@ use App\Http\Controllers\CommonController;
 
 // loading index/landing Page
 Route::get('/', [Controller::class, 'index'])->name('index');
+//Approval route on clicking the mail link
+Route::get('/redirect-login', [Controller::class, 'process'])->name('approval.process');
 
 // routes only for authenticated role user
 Route::middleware(['auth', 'verified','role:user'])->group(function(){
@@ -32,7 +34,9 @@ Route::middleware(['auth', 'verified','role:user'])->group(function(){
     
     Route::get('manage_users/add_user/{id}', [UserController::class, 'edit_adduser']);
     Route::post('manage_users/edit_adduser/{id}', [UserController::class, 'update_adduser']) -> name('useradd-update');
-    Route::delete('manage_users/delete_adduser/{id}', [UserController::class, 'delete_adduser']);
+
+    Route::get('/passwordChange', [UserController::class, 'change_pwd'])->name('change-pwd');
+    Route::post('/savePassword', [UserController::class, 'save_pwd'])->name('save_password');
 });
 
 // routes only for authenticated role admin
@@ -43,19 +47,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
 
     Route::get('manage_users/{id}', [AdminController::class, 'edit_user']);
     Route::post('manage_users/{id}', [AdminController::class, 'update_user']) -> name('user-update');
-    Route::delete('manage_users/{id}', [AdminController::class, 'delete_user']);
 
     Route::put('user_pending/{id}', [AdminController::class, 'user_approve_reject'])->name('user-approval-reject');
     // Route::put('user_action/{id}', [AdminController::class, 'user_approve_reject'])->name('user-action');
     Route::get('/pendingList', [AdminController::class, 'pending'])->name('pendingList');
-    Route::get('/approvedList', [AdminController::class, 'approved'])->name('approvedList');
     Route::get('/ticketList', [AdminController::class, 'displayTicket'])->name('showTickets');
     Route::get('/ticketView/{id}', [AdminController::class, 'viewTicket']);
-    Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close');
-    Route::put('/exited/{id}', [AdminController::class, 'exit_now'])->name('exit-now');    
-
-    //Approval route on clicking the mail link
-    Route::get('/redirect-login', [AdminController::class, 'process'])->name('approval.process');
+    Route::put('/closeTicket/{id}', [AdminController::class, 'ticketClose'])->name('ticket-close'); 
 
     //setting routes
     Route::get('/app_setting', [AdminController::class, 'setting'])->name('manage-setting');
@@ -70,17 +68,32 @@ Route::middleware(['auth', 'verified', 'role:admin'])->group(function(){
 
     Route::get ('/add_focal', [AdminController::class, 'add_focal'])->name('add_focal');
     Route::post('/save_focal', [AdminController::class, 'save_focal'])->name('save_focal');
+
+    Route::get ('/edit_dc/{id}', [AdminController::class, 'edit_dc'])->name('edit-dc');
+    Route::get ('/edit_org/{id}', [AdminController::class, 'edit_org'])->name('edit-org');
+    Route::get ('/edit_rack/{id}', [AdminController::class, 'edit_rack'])->name('edit-rack');
+    Route::get ('/edit_focal/{id}', [AdminController::class, 'edit_focal'])->name('edit-focal');
+
+    Route::delete('delete_dc/{id}', [AdminController::class, 'delete_dc']);
+    Route::delete('delete_org/{id}', [AdminController::class, 'delete_org']);
+    Route::delete('delete_rack/{id}', [AdminController::class, 'delete_rack']);
+    Route::delete('delete_focal/{id}', [AdminController::class, 'delete_focal']);
 });
 
 // routes for authenticated users with role user & admin
 Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/dashboard', [CommonController::class, 'index'])->name('dashboard');
+    Route::get('/approvedList', [AdminController::class, 'approved'])->name('approvedList');
     Route::get('/view-request/{id}', [CommonController::class, 'viewRequest']);
     Route::get('/manage_users', [CommonController::class, 'manage'])->name('manage-user');
+    Route::put('/exited/{id}', [AdminController::class, 'exit_now'])->name('exit-now');
 
     //add new user routes
     Route::get('/add_user', [CommonController::class, 'add'])->name('add_user');
     Route::post('/save_user', [CommonController::class, 'add_user'])->name('save_user');
+
+    Route::delete('manage_users/{id}', [CommonController::class, 'delete_user']);
+    Route::delete('manage_users/delete_adduser/{id}', [CommonController::class, 'delete_user']);
 });
 
     //auth routes
@@ -95,5 +108,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-   
 });

@@ -12,7 +12,7 @@
                     <section>
                         <header>
                             <h2 class="text-lg font-medium text-gray-900 text-center">
-                                {{ __('Approved/Rejected Request') }}
+                                {{ __('Your Request') }}
                             </h2>
                         </header>
                         <br>
@@ -24,13 +24,6 @@
                                     <th>Rack Name</th>
                                     <th>Request Type</th>
                                     <th>Status</th>
-                                    <th class="hidden">Name</th>
-                                    <th class="hidden">CID</th>
-                                    <th class="hidden">Email</th>
-                                    <th class="hidden">Contact</th>
-                                    <th class="hidden">Rack No</th>
-                                    <th class="hidden">Visit From</th>
-                                    <th class="hidden">Visit To</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -45,20 +38,14 @@
                                     @if($res->exited == 0)
                                     @if ($res->status == 'A')
                                     <td>{{'Approved'}}</td>
+                                    @elseif($res->status == 'I')
+                                    <td>{{'Pending'}}</td>
                                     @else
                                     <td>{{'Rejected'}}</td>
                                     @endif
                                     @else
                                     <td>{{'Exited'}}</td>
                                     @endif
-                                    <td class="hidden">{{$res->name}}</td>
-                                    <td class="hidden">{{$res->cid}}</td>
-                                    <td class="hidden">{{$res->email}}</td>
-                                    <td class="hidden">{{$res->contact}}</td>
-                                    <td class="hidden">{{$res->rack_no}}</td>
-                                    <td class="hidden">{{$res->visitFrom}}</td>
-                                    <td class="hidden">{{$res->visitTo}}</td>
-
                                     <td>
                                         <form action="exited/{{ $res->id }}" method="post">
                                             <a href="view-request/{{ $res->id }}" class="btn btn-info btn-sm">
@@ -70,56 +57,37 @@
                                             @method('PUT')
                                             <button type="submit" class="btn btn-secondary btn-sm">
                                                 <i class="far fa-edit"></i>
-                                                Exit</a>
-                                                @endif
+                                                Exit</button>
+                                            @endif
                                         </form>
-                                    </td>
                                     </td>
                                 </tr>
                                 @endforeach
 
                             </tbody>
 
-                            @if (session('success'))
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                Swal.fire({
-                                    title: '{{ session('title') }}',
-                                    text: '{{ session('success') }}',
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                });
-                            });
-                            </script>
-                            @endif
-
                         </table>
-                        <div id="excel_button_wrapper"></div>
-
-                        <!-- DataTables buttons for excel, pdf etc. -->
-                        <script src="{{asset('plugins/datatables-buttons/js/dataTables.buttons.min.js')}}"></script>
-                        <script src="{{asset('plugins/jszip/jszip.min.js')}}"></script>
-                        <script src="{{asset('plugins/pdfmake/pdfmake.min.js')}}"></script>
-                        <script src="{{asset('plugins/pdfmake/vfs_fonts.js')}}"></script>
-                        <script src="{{asset('plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-                        <script src="{{asset('plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-                        <script src="{{asset('../plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
 
                         <script>
                             $('#approved_rejectList').DataTable({
-                                "buttons": [
-                                { extend: 'excel', 
-                                text: '<i class="btn btn-primary btn-sm" aria-hidden="true"> Export as excel</i>',
-                                title: 'Access request list'
-                                }]
-                            }).buttons().container().appendTo('#excel_button_wrapper');
-                    
+                                
+                            });
                         </script>
-
+                        @if (session('success'))
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                            Swal.fire({
+                                title: '{{ session('title') }}',
+                                text: '{{ session('success') }}',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                        </script>
+                        @endif
                     </section>
                 </div>
             </div>
         </div>
     </div>
-
 </x-app-layout>

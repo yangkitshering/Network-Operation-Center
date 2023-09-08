@@ -40,7 +40,13 @@
                                     <tr>
                                         <td>{{$user->id}}</td>
                                         <td>{{$user->name}}</td>
+                                        @if($user->role == 'admin')
+                                        <td>{{'BTL DataCenter'}}</td>
+                                        @elseif($user->role == 'user' && $user->is_dcfocal == 1)
+                                        <td>{{'BTL'}}</td>
+                                        @else
                                         <td>{{$user->org_name}}</td>
+                                        @endif
                                         <td>{{$user->email}}</td>
                                         {{-- <td>
                                             @if($user->role == 'admin')
@@ -78,6 +84,9 @@
                                             </form>
                                             @endif
                                             @else
+                                            @if ($user->id == auth()->user()->id)
+                                            <p>Current Admin</p>
+                                            @else
                                             <form action="manage_users/delete_adduser/{{ $user->id }}" method="post">
                                                 @if($user->verified == 0)
                                                 <a href="manage_users/add_user/{{ $user->id }}"
@@ -94,6 +103,7 @@
                                                     Delete</button>
                                             </form>
                                             @endif
+                                            @endif
                                         </td>
 
                                     </tr>
@@ -103,7 +113,7 @@
                                 @else
                                 <tbody>
                                     <tr>
-                                        <td colspan="9" allign="center">No Users</td>
+                                        <td colspan="9" align="center">No Users</td>
                                     </tr>
                                 </tbody>
                                 @endif

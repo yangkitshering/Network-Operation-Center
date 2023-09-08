@@ -24,4 +24,10 @@ class Controller extends BaseController
             return redirect(RouteServiceProvider::HOME);
         }
     }
+
+    // Render login page on clicking mail link.
+    public function process()
+    {
+        return redirect('login');
+    }
 }

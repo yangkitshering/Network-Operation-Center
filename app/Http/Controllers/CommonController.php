@@ -39,7 +39,7 @@ class CommonController extends Controller
             ->get();
 
             return view('dashboard');
-        }else{
+        }else if(Auth::user()->hasRole('user') && Auth::user()->is_dcfocal == 0){
             $requests = DB::table('registrations as r')
             ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
             ->join('organizations as o', 'o.id', '=', 'r.organization')
@@ -48,6 +48,16 @@ class CommonController extends Controller
             ->get();
 
             return view('pages.user_request', compact('requests'));
+        }else{
+            $requests = DB::table('registrations as r')
+            ->join('rack_lists', 'r.rack', '=', 'rack_lists.id')
+            ->join('organizations as o', 'o.id', '=', 'r.organization')
+            ->join('dc_focals as f', 'f.id', 'r.focal_id')
+            ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
+            ->where('f.user_id', '=', Auth::user()->id)
+            ->get();
+
+            return view('pages.pending_exit', compact('requests'));
         }     
     }
 
@@ -69,9 +79,10 @@ class CommonController extends Controller
         ->get();
 
         $focals = DB::table('dc_focals as f')
-                  ->select('f.*')
-                  ->where('f.dc_id', Auth::user()->dc_id)
-                  ->get();
+                ->join('users as u', 'f.user_id', 'u.id')
+                ->select('f.*')
+                ->where('f.dc_id', Auth::user()->dc_id)
+                ->get();
 
         return view('pages.view', compact('requests', 'visitors', 'focals'));
     }
@@ -83,20 +94,20 @@ class CommonController extends Controller
         if(Auth::user()->hasRole('admin')){
             $users = DB::table('users')
             ->join('organizations', 'users.organization', '=', 'organizations.id')
-            // ->join('role_user', 'users.id', '=', 'role_user.user_id')
-            // ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            // ->select('users.*', 'organizations.org_name', 'roles.name as role')
-            ->select('users.*', 'organizations.org_name')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->select('users.*', 'organizations.org_name', 'roles.name as role')   
             // ->where('users.status', '!=', 'D')
             ->where('users.dc_id', '=', Auth::user()->dc_id)
             ->get();
         }else{
-            $users = DB::table('user_adds as u')
-            ->join('organizations', 'u.client_org', '=', 'organizations.id')
-            // ->join('role_user', 'u.id', '=', 'role_user.user_id')
-            // ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            ->select('u.*', 'organizations.org_name')
+            $users = DB::table('users as u')
+            ->join('organizations', 'u.organization', '=', 'organizations.id')
+            ->join('role_user', 'u.id', '=', 'role_user.user_id')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->select('u.*', 'organizations.org_name', 'roles.name as role')
             ->where('u.user_ref_id', '=', Auth::user()->id)
+            ->orWhere('u.id', Auth::user()->id)
             ->get();
         }
         return view('admin.manage', compact('users'));
@@ -155,6 +166,7 @@ class CommonController extends Controller
             'verified' => 0,
             'user_ref_id' => Auth::user()->id,
             'status' => 'I',
+            'is_dcfocal' => 0,
             'password' => Hash::make($request->password),
         ]);
 
@@ -191,7 +203,7 @@ class CommonController extends Controller
 
         $mail_data = [
             'title'=> 'Dear Sir/Madam,',
-            'body'=> 'New user has registered',
+            'body'=> 'The below user has submitted registration request for your approval.',
             'name' => $request->name,
             'cid' => $request->cid,
             'organization' => $org->org_name,
@@ -199,27 +211,63 @@ class CommonController extends Controller
             'contact' => $request->contact,
         ];
 
-        Mail::to('noc@bt.bt')
-        // ->cc('itservices@bt.bt')
-        ->send(new UserApproval($mail_data));
+        //get approver
+        $approver = $this->getApprover($org->dc_id);           
+        //notify to approver           
+        foreach($approver as $approve){
+            Mail::to($approve->email)
+            // ->cc('itservices@bt.bt')
+            ->send(new UserApproval($mail_data));
 
-        //SMS
-        $sms = 'Your registration has been submitted for approval. For more please contact nnoc@bt.bt or 17171717';
+            $text = "New registration request has been submitted for your approval. Please check your email.";
+            $to = "975". $approve->contact;
+            $this->sendSMS($text, $to);
+        }
+
+        //notify to user
+        $text = 'Your registration has been sent for approval by '.$org->org_name. ' client.'.' For more please contact nnoc@bt.bt or 17171717';
+        $to = "975". $request->contact;
+        $this->sendSMS($text, $to);
+
+        Session::flash('success', 'New user added successfully.');
+        return redirect()->back();
+        // return redirect('manage_users')->with('success', 'User added successfully.');
+    }
+
+    // method to Delete User
+    public function delete_user( $id, Request $request)
+    {
+        $add_user_id = DB::table('user_adds')->where('user_id', $id)->value('id');
+        DB::table('user_adds')
+            ->where('id', $add_user_id)
+            ->update(['verified' => false,
+        'status'=> 'D']);
+
+        DB::table('users')->where('id', $id)->delete();
+
+        return redirect('manage_users');
+    }
+
+    //function to get approver list bases on DC
+    public function getApprover($dc){
+        return DB::table('users as u')
+                    ->join('role_user', 'role_user.user_id', 'u.id')
+                    ->select('u.email','u.contact')
+                    ->where('u.dc_id', $dc)
+                    ->where('role_user.role_id', 1)
+                    ->get();
+    }
+
+    //function to send sms
+    public function sendSMS($text, $to){
         $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
         $user = "tester";
         $pass = "foobar";
-        $text = $sms;
-        $to = "975". $request->contact;
         Http::get($kannelApiUrl, [
             'user' => $user,
             'pass' => $pass,
             'text' => $text,
             'to' => $to,
         ]);
-
-        Session::flash('success', 'New user added successfully.');
-        return redirect()->back();
-        // return redirect('manage_users')->with('success', 'User added successfully.');
     }
-    
 }

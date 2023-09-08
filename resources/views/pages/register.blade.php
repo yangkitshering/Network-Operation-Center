@@ -237,7 +237,7 @@
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             Swal.fire({
-                                title: 'Success',
+                                title: '{{ session('title') }}',
                                 text: '{{ session('success') }}',
                                 icon: 'success',
                                 confirmButtonText: 'OK'

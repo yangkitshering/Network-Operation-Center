@@ -100,7 +100,7 @@
                                     <td>{{'Rejected'}}</td>
                                     @endif
                                     @else
-                                    <td>{{'Exited'}}</td>
+                                    <td>{{'Exited at '}}({{$requests->updated_at}})</td>
                                     @endif
                                 </tr>
                                 @if($requests->status == 'R')
@@ -128,6 +128,32 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @elseif($requests->status == 'A' && $requests->exited == 0)
+                                <tr>
+                                    <th>Action</th>
+                                    <td>
+                                    <form action="/exited/{{$requests->id}}" method="POST">
+                                            @csrf
+                                            @method('PUT')  
+                                            <button type="submit" class="btn btn-secondary"
+                                                value="{{ $requests->id }}">Exit</button>
+                                    </form>
+                                    </td>
+                                </tr>
+                                @endif
+                                @else
+                                @if($requests->exited == 0 && $requests->status == 'A' && Auth::user()->is_dcfocal == 1)
+                                <tr>
+                                    <th>Action</th>
+                                    <td>
+                                    <form action="/exited/{{$requests->id}}" method="POST">
+                                            @csrf
+                                            @method('PUT')  
+                                            <button type="submit" class="btn btn-secondary"
+                                                value="{{ $requests->id }}">Exit</button>
+                                    </form>
+                                    </td>
+                                </tr>
                                 @endif
                                 @endif
                             </table>
@@ -138,11 +164,11 @@
                             Swal.fire({
                                 title: '{{ session('title') }}',
                                 text: '{{ session('success') }}',
-                                icon: 'success',
+                                icon: '{{ session('icon') }}',
                                 confirmButtonText: 'OK'
                             }).then((result) => {
                                         if(result.isConfirmed){
-                                            window.location.href = "{{ route('pendingList')}}";
+                                            window.location.href = "{{ route('approvedList')}}";
                                         }
                                     });
                         });

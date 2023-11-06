@@ -29,6 +29,7 @@ use App\Models\RackList;
 use App\Models\DcFocal;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -53,7 +54,7 @@ class AdminController extends Controller
             ->join('organizations as o', 'o.id', '=', 'r.organization')
             ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
             ->where('r.status', '=', 'I')
-            ->where('o.dc_id', '=', Auth::user()->dc_id)
+            ->where('r.dc', '=', Auth::user()->dc_id)
             ->get();
 
         $focals = DB::table('dc_focals as f')
@@ -76,7 +77,7 @@ class AdminController extends Controller
             ->join('organizations as o', 'o.id', '=', 'r.organization')
             ->select('r.*', 'rack_lists.rack_no', 'rack_lists.rack_name', 'o.org_name')
             ->where('r.status', '!=', 'I')
-            ->where('o.dc_id', '=', Auth::user()->dc_id)
+            ->where('r.dc', '=', Auth::user()->dc_id)
             ->get();
 
         return view('pages.approve_reject', compact('requests'));
@@ -105,6 +106,12 @@ class AdminController extends Controller
         ];
 
         $registration = Registration::where('id', $request->reg_id)->first();
+        $reg = DB::table('registrations as r')
+                        ->join('rack_lists as rl', 'r.rack', 'rl.id')
+                        ->select('r.*', 'rl.rack_no', 'rl.rack_name', 'rl.desc')
+                        ->where('r.id', $request->reg_id)
+                        ->first();
+// dd($registration);
         $requester_name = $registration->name;
         $dc_focal = DcFocal::where('id', $request->focal_id)->first();
         if($request->flag == 1){
@@ -124,12 +131,12 @@ class AdminController extends Controller
            ->get();
            //PDF file part
            $org_name = DB::table('organizations')->where('id', $registration->organization)->value('org_name');
-           $pdf= Pdf::loadView('pages.e_reg_card', compact('registration', 'org_name', 'additional_user', 'dc_focal'));
+           $pdf= Pdf::loadView('pages.e_reg_card', compact('reg', 'org_name', 'additional_user', 'dc_focal'));
            $pdfFileName = 'eRegistration_' . $requester_name . '_' . time() . '.pdf'; // Generate a unique name
            $pdf->save(storage_path('app/public/' . $pdfFileName)); // Save with the unique name
 
            //send sms to dc focal
-           $f_sms = 'You are assigned as focal to '.$org_name.'.'.'Kindly assist them to the NOC server and mark EXIT through the system on completing.';
+           $f_sms = 'You are assigned as focal to '.$org_name.'.'.'Kindly assist them to the NOC server at '.$registration->visitFrom.' and mark EXIT through the system on completing.';
            $f_contact = "975".$dc_focal->focal_contact;
            $this->sendSMS($f_sms, $f_contact);
 
@@ -189,13 +196,16 @@ class AdminController extends Controller
     // method to Update User
     public function update_user(Request $request, $id)
     {
+        
+    // dd($request);
         $usr = User::find($id);
         $request->validate([
             'name' => ['required', 'string', 'max:200'],
             'cid' => ['required', 'string', 'max:11'],
             'organization' => 'required',
             'contact' => ['required', 'max:8'],
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', Rule::unique('users')->ignore($id),
+            'max:255','regex:/^.+@.+\..+$/'],
         ]);
 
             $usr->update([
@@ -204,6 +214,10 @@ class AdminController extends Controller
                     'organization' => $request->organization,
                     'contact' => $request->contact,
                     'email' => $request->email,  
+                    'is_thim_dc' => $request->has('thim'),
+                    'is_pling_dc' => $request->has('pling'),
+                    'is_jakar_dc' => $request->has('jakar'),
+
             ]);
 
             // Detaching Role Before Assigning The Updated Role
@@ -320,7 +334,8 @@ class AdminController extends Controller
             ->join('organizations', 'users.organization', '=', 'organizations.id')
             ->select('users.*', 'organizations.org_name')
             ->where('users.status', '=', 'I')
-            ->where('users.dc_id', '=', Auth::user()->dc_id)
+            // ->where('users.is_pling_dc', '=', 1)
+            // ->where('users.dc_id', '=', Auth::user()->dc_id)
             ->get();
 
             return view('pages.user_pending_list', compact('users'));
@@ -454,12 +469,15 @@ class AdminController extends Controller
     //function to load add organization page
     public function add_organization()
     {
+
+        $user = Auth::user();
+
         $dc_list = DB::table('data_centers as d')
                    ->select('d.*')
                    ->where('d.id', Auth::user()->dc_id)
                    ->get();
 
-        return view('pages.add_organization', compact('dc_list'));
+        return view('pages.add_organization', compact('dc_list','user'));
     }
 
     /**
@@ -476,32 +494,74 @@ class AdminController extends Controller
     }
 
     //function to save and edit organization
-    public function save_organization(Request $request)
-    {
-        $validateData = $request->validate([
-            'dc_id' =>'required',
-            'org_name'=>'required',
-            'org_address'=>'required',
-        ]);
+    // public function save_organization(Request $request)
+    // {
+    //     $validateData = $request->validate([
+    //         'dc_id' =>'required',
+    //         'org_name'=>'required',
+    //         'org_address'=>'required',
+    //     ]);
        
-        if($request->id == null){
-            $organization = new Organization([
-                'dc_id'=>$validateData['dc_id'] ,
-                'org_name'=>$validateData['org_name'] ,
-                'org_address'=>$validateData['org_address'] ,
-            ]);
-            $msg = 'Organization added successfully!';
-        }else{ //edit flag
-            $organization = Organization::where('id', $request->id)->first();
-            $organization->org_name = $request->org_name;
-            $organization->org_address = $request->org_address;
-            $organization->dc_id = $request->dc_id;
-            $msg = 'Organization updated successfully!';
-        }
-        $organization->save();
+    //     if($request->id == null){
+    //         $organization = new Organization([
+    //             'dc_id'=>$validateData['dc_id'] ,
+    //             'org_name'=>$validateData['org_name'] ,
+    //             'org_address'=>$validateData['org_address'] ,
+    //             'is_thim_dc' => $request->has('thim'),
+    //             'is_pling_dc' => $request->has('pling'),
+    //             'is_jakar_dc' => $request->has('jakar'),
+    //         ]);
+    //         $msg = 'Organization added successfully!';
+    //     }else{ //edit flag
+    //         $organization = Organization::where('id', $request->id)->first();
+    //         $organization->org_name = $request->org_name;
+    //         $organization->org_address = $request->org_address;
+    //         $organization->dc_id = $request->dc_id;
+    //         $organization->is_thim_dc = $request->has('thim');
+    //         $organization->is_pling_dc = $request->has('pling');
+    //         $organization->is_jakar_dc = $request->has('jakar');
+    //         $msg = 'Organization updated successfully!';
+    //     }
+    //     $organization->save();
 
-        return redirect()->back()->with('success', $msg);
+    //     return redirect()->back()->with('success', $msg);
+    // }
+    public function save_organization(Request $request)
+{
+    $validateData = $request->validate([
+        'dc_id' =>'required',
+        'org_name'=>'required',
+        'org_address'=>'required',
+    ]);
+   
+    if ($request->has('id')) {
+        // Editing existing organization
+        $organization = Organization::findOrFail($request->id);
+        $organization->org_name = $request->org_name;
+        $organization->org_address = $request->org_address;
+        $organization->dc_id = $request->dc_id;
+        $organization->is_thim_dc = $request->has('thim');
+        $organization->is_pling_dc = $request->has('pling');
+        $organization->is_jakar_dc = $request->has('jakar');
+        $msg = 'Organization updated successfully!';
+    } else {
+        // Adding new organization
+        $organization = new Organization([
+            'dc_id'=>$validateData['dc_id'] ,
+            'org_name'=>$validateData['org_name'] ,
+            'org_address'=>$validateData['org_address'] ,
+            'is_thim_dc' => $request->has('thim'),
+            'is_pling_dc' => $request->has('pling'),
+            'is_jakar_dc' => $request->has('jakar'),
+        ]);
+        $msg = 'Organization added successfully!';
     }
+
+    $organization->save();
+
+    return redirect()->back()->with('success', $msg);
+}
+
 
     // method to Delete org
     public function delete_org( $id)
@@ -595,15 +655,15 @@ class AdminController extends Controller
     //save dc focal
     public function save_focal(Request $request)
     {
-        $validate = $request->validate([
-            'dc_id' => 'required|integer',
-            'focal_name' => 'required|string',
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
-            // 'email' => 'required|string',
-            'focal_contact' => 'required|string',
-        ]);
-    
         if($request->id == null){
+            // dd($request->id);
+            $validate = $request->validate([
+                'dc_id' => 'required|integer',
+                'focal_name' => 'required|string',
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
+                'focal_contact' => 'required|string',
+            ]);
+
             $user = User::create([
                 'name' => $request->focal_name,
                 'cid' => '11000000001',
@@ -629,6 +689,14 @@ class AdminController extends Controller
             $msg = 'DC focal added successfully!';
         }else{
             $dc_focal = DcFocal::where('id', $request->id)->first();
+
+            $valid = $request->validate([
+                'dc_id' => 'required|integer',
+                'focal_name' => 'required|string',
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($dc_focal->user_id), 'regex:/^.+@.+\..+$/'],
+                'focal_contact' => 'required|string',
+            ]);
+
             //update user
             $usr = User::where('id', $dc_focal->user_id)->first();
             $usr->name = $request->focal_name;

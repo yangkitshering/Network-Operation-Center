@@ -31,6 +31,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
+
         $organizations = DB::table('organizations as o')
                ->join('data_centers as d', 'o.dc_id', 'd.id')
                ->select('o.*', 'd.dc_name')
@@ -44,120 +45,256 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+    // public function store(Request $request): RedirectResponse
+    // {
+    //     // dd($request);
+       
+    //     $request->validate([
+    //         'name' => ['required', 'string', 'max:255'],
+    //         'cid' => ['required', 'string', 'max:11'],
+    //         'organization' => 'required',
+    //         'contact' => ['required', 'max:8'],
+    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
+    //         'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    //         'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Adjust max file size as needed
+    //     ],
+    //     [
+    //         'password.required' => 'The password field is required.',
+    //         'password.confirmed' => 'The password confirmation does not match.',
+    //         'email.regex' => 'The email address format is invalid.',
+    //         'files.*.required' => 'The CID photo is required.',
+    //         'files.*.mimes' => 'The CID photo must be a valid image or PDF file.',
+    //         'cid.required' => 'The CID field is required.', // Error message for CID field
+    //     ]);
+    //     //for multiple file
+    //     $cid = $request->cid;
+    //     $filePaths = [];
+    //     $i = 1;
+    //     if ($request->hasFile('files')) {
+    //         foreach ($request->file('files') as $file) {
+    //             // Generate the filename using the provided CID and the file's original extension
+    //             $filename = $cid . '_'. $i . '.' . $file->getClientOriginalExtension();
+    //             // $original_filename = time() . '_' . $file->getClientOriginalName();
+    //             $filePath = $file->storeAs('cid_photos', $filename, 'public');
+    //             $filePaths[] = $filePath;
+    //             $i++;
+    //         }
+    //     }
+
+    //     $org = Organization::find($request->organization);
+    //     $user = User::create([
+    //         'name' => $request->name,
+    //         'cid' => $request->cid,
+    //         'organization' => $request->organization,
+    //         'dc_id' => $org->dc_id,
+    //         'email' => $request->email,
+    //         'contact' => $request->contact,
+    //         'verified' => 0,
+    //         'user_ref_id' => 0,
+    //         'status' => 'I',
+    //         'is_dcfocal' => 0,
+    //         'password' => Hash::make($request->password),
+    //         'is_thim_dc' => optional($request->thim)->contains('tphu_dc'),
+    //         'is_pling_dc' => optional($request->pling)->contains('pling_dc'),
+    //         'is_jakar_dc' => optional($request->jakar)->contains('jakar_dc'),
+    //     ]);
+
+    //     // Attach CID photos to the user if any were uploaded
+    //     if (!empty($filePaths)) {
+    //         $user->cidPhotos()->createMany(array_map(function ($path) {
+    //             return ['path' => $path];
+    //         }, $filePaths));
+    //     }
+
+    //     //save to add_user table
+    //     $add_user = UserAdd::create([
+    //         'name' => $request->name,
+    //         'cid' => $request->cid,
+    //         'client_org' => $request->organization,
+    //         'dc_id' => $org->dc_id,
+    //         'organization' => $org->org_name,
+    //         'email' => $request->email,
+    //         'contact' => $request->contact,
+    //         'verified' => 0,
+    //         'user_id' => $user->id,
+    //         'user_ref_id' => 0,
+    //         'status' => 'I',
+    //     ]);
+
+    //     // Attach CID photos to the user if any were uploaded
+    //     if (!empty($filePaths)) {
+    //         $add_user->user_add_cid()->createMany(array_map(function ($path) {
+    //             return ['path' => $path];
+    //         }, $filePaths));
+    //     }
+
+    //     $user->attachRole('user');
+    //     event(new Registered($user));
+    //     // Auth::login($user);
+    //     // return redirect(RouteServiceProvider::HOME);
+
+    //     $mail_data = [
+    //         'title'=> 'Dear Sir/Madam,',
+    //         'body'=> 'The below user has submitted registration request for your approval.',
+    //         'name' => $request->name,
+    //         'cid' => $request->cid,
+    //         'organization' => $org->org_name,
+    //         'email' => $request->email,
+    //         'contact' => $request->contact,
+
+    //     ];
+
+    //     //get approver
+    //     $approver = $this->getApprover($org->dc_id);           
+    //     //notify to approver           
+    //     foreach($approver as $approve){
+    //         Mail::to($approve->email)
+    //         // ->cc('itservices@bt.bt')
+    //         ->send(new UserApproval($mail_data));
+
+    //         $text = "New registration request has been submitted for your approval. Please check your email.";
+    //         $to = "975". $approve->contact;
+    //         $this->sendSMS($text, $to);
+    //     }
+
+    //     //notify to user
+    //     $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
+    //     $to = "975". $request->contact;
+    //     $this->sendSMS($text, $to);
+
+    //     return redirect()->route('login')->with('message', "Your registration has been submitted for approval. Please contact nnoc@bt.bt.");
+    // }
+
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'cid' => ['required', 'string', 'max:11'],
-            'organization' => 'required',
-            'contact' => ['required', 'max:8'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048', // Adjust max file size as needed
-        ],
-        [
-            'password.required' => 'The password field is required.',
-            'password.confirmed' => 'The password confirmation does not match.',
-            'email.regex' => 'The email address format is invalid.',
-            'files.*.required' => 'The CID photo is required.',
-            'files.*.mimes' => 'The CID photo must be a valid image or PDF file.',
-            'cid.required' => 'The CID field is required.', // Error message for CID field
-        ]);
-        //for multiple file
-        $cid = $request->cid;
-        $filePaths = [];
-        $i = 1;
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                // Generate the filename using the provided CID and the file's original extension
-                $filename = $cid . '_'. $i . '.' . $file->getClientOriginalExtension();
-                // $original_filename = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('cid_photos', $filename, 'public');
-                $filePaths[] = $filePath;
-                $i++;
-            }
+{
+    // dd($request);
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'cid' => ['required', 'string', 'max:11'],
+        'organization' => 'required',
+        'contact' => ['required', 'max:8'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class, 'regex:/^.+@.+\..+$/'],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'files.*' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+    ], [
+        'password.required' => 'The password field is required.',
+        'password.confirmed' => 'The password confirmation does not match.',
+        'email.regex' => 'The email address format is invalid.',
+        'files.*.required' => 'The CID photo is required.',
+        'files.*.mimes' => 'The CID photo must be a valid image or PDF file.',
+        'cid.required' => 'The CID field is required.',
+        
+    ]);
+    
+
+    $cid = $request->cid;
+    $filePaths = [];
+    $i = 1;
+    if ($request->hasFile('files')) {
+        foreach ($request->file('files') as $file) {
+            $filename = $cid . '_' . $i . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('cid_photos', $filename, 'public');
+            $filePaths[] = $filePath;
+            $i++;
         }
-
-        $org = Organization::find($request->organization);
-        $user = User::create([
-            'name' => $request->name,
-            'cid' => $request->cid,
-            'organization' => $request->organization,
-            'dc_id' => $org->dc_id,
-            'email' => $request->email,
-            'contact' => $request->contact,
-            'verified' => 0,
-            'user_ref_id' => 0,
-            'status' => 'I',
-            'is_dcfocal' => 0,
-            'password' => Hash::make($request->password),
-        ]);
-
-        // Attach CID photos to the user if any were uploaded
-        if (!empty($filePaths)) {
-            $user->cidPhotos()->createMany(array_map(function ($path) {
-                return ['path' => $path];
-            }, $filePaths));
-        }
-
-        //save to add_user table
-        $add_user = UserAdd::create([
-            'name' => $request->name,
-            'cid' => $request->cid,
-            'client_org' => $request->organization,
-            'dc_id' => $org->dc_id,
-            'organization' => $org->org_name,
-            'email' => $request->email,
-            'contact' => $request->contact,
-            'verified' => 0,
-            'user_id' => $user->id,
-            'user_ref_id' => 0,
-            'status' => 'I',
-        ]);
-
-        // Attach CID photos to the user if any were uploaded
-        if (!empty($filePaths)) {
-            $add_user->user_add_cid()->createMany(array_map(function ($path) {
-                return ['path' => $path];
-            }, $filePaths));
-        }
-
-        $user->attachRole('user');
-        event(new Registered($user));
-        // Auth::login($user);
-        // return redirect(RouteServiceProvider::HOME);
-
-        $mail_data = [
-            'title'=> 'Dear Sir/Madam,',
-            'body'=> 'The below user has submitted registration request for your approval.',
-            'name' => $request->name,
-            'cid' => $request->cid,
-            'organization' => $org->org_name,
-            'email' => $request->email,
-            'contact' => $request->contact,
-
-        ];
-
-        //get approver
-        $approver = $this->getApprover($org->dc_id);           
-        //notify to approver           
-        foreach($approver as $approve){
-            Mail::to($approve->email)
-            // ->cc('itservices@bt.bt')
-            ->send(new UserApproval($mail_data));
-
-            $text = "New registration request has been submitted for your approval. Please check your email.";
-            $to = "975". $approve->contact;
-            $this->sendSMS($text, $to);
-        }
-
-        //notify to user
-        $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
-        $to = "975". $request->contact;
-        $this->sendSMS($text, $to);
-
-        return redirect()->route('login')->with('message', "Your registration has been submitted for approval. Please contact nnoc@bt.bt.");
     }
+
+    $org = Organization::find($request->organization);
+    $is_thimphu = false;
+    $is_pling = false;
+    $is_jakar = false;
+    $dc_approver = 0;
+
+    if($org->is_thim_dc == 1){
+            $is_thimphu = true;
+    }
+    if($org->is_pling_dc == 1){
+            $is_pling = true;
+    }
+    if($org->is_jakar_dc == 1){
+            $is_jakar = true;
+    }
+
+    $user = User::create([
+        'name' => $request->name,
+        'cid' => $request->cid,
+        'organization' => $request->organization,
+        'dc_id' => $org->dc_id,
+        'email' => $request->email,
+        'contact' => $request->contact,
+        'verified' => 0,
+        'user_ref_id' => 0,
+        'status' => 'I',
+        'is_dcfocal' => 0,
+        'password' => Hash::make($request->password),
+        'is_thim_dc' => $is_thimphu,
+        'is_pling_dc' => $is_pling,
+        'is_jakar_dc' => $is_jakar,
+    
+    ]);
+
+    if (!empty($filePaths)) {
+        $user->cidPhotos()->createMany(array_map(function ($path) {
+            return ['path' => $path];
+        }, $filePaths));
+    }
+
+    $add_user = UserAdd::create([
+        'name' => $request->name,
+        'cid' => $request->cid,
+        'client_org' => $request->organization,
+        'dc_id' => $org->dc_id,
+        'organization' => $org->org_name,
+        'email' => $request->email,
+        'contact' => $request->contact,
+        'verified' => 0,
+        'user_id' => $user->id,
+        'user_ref_id' => 0,
+        'status' => 'I',
+    ]);
+
+    if (!empty($filePaths)) {
+        $add_user->user_add_cid()->createMany(array_map(function ($path) {
+            return ['path' => $path];
+        }, $filePaths));
+    }
+
+    $user->attachRole('user');
+    event(new Registered($user));
+
+    $mail_data = [
+        'title' => 'Dear Sir/Madam,',
+        'body' => 'The below user has submitted a registration request for your approval.',
+        'name' => $request->name,
+        'cid' => $request->cid,
+        'organization' => $org->org_name,
+        'email' => $request->email,
+        'contact' => $request->contact,
+    ];
+
+    if($is_thimphu == true){
+        $dc_approver = 1;
+    }else if($is_pling == true){
+        $dc_approver = 2;
+    }else{
+        $dc_approver = 3; 
+    }
+
+    $approver = $this->getApprover($dc_approver);
+    foreach ($approver as $approve) {
+        Mail::to($approve->email)->send(new UserApproval($mail_data));
+        $text = "New registration request has been submitted for your approval. Please check your email.";
+        $to = "975" . $approve->contact;
+        $this->sendSMS($text, $to);
+    }
+
+    $text = "Your Registration has been sent for approval. For more please contact nnoc@bt.bt or 17171717";
+    $to = "975" . $request->contact;
+    $this->sendSMS($text, $to);
+
+    return redirect()->route('login')->with('message', "Your registration has been submitted for approval. Please contact nnoc@bt.bt.");
+}
+
     
     //function to get approver list bases on DC
     public function getApprover($dc){

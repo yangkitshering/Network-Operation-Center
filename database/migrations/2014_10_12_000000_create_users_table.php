@@ -28,6 +28,11 @@ return new class extends Migration
             // $table->string('file_path')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->boolean('is_thim_dc')->default(0);
+            $table->boolean('is_pling_dc')->default(0);
+            $table->boolean('is_jakar_dc')->default(0);
+
+
         });
     }
 

@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('org_name');
             $table->string('org_address');
             $table->integer('dc_id');
+            $table->boolean('is_thim_dc')->default(0);
+            $table->boolean('is_pling_dc')->default(0);
+            $table->boolean('is_jakar_dc')->default(0);
+
             $table->timestamps();
         });
     }

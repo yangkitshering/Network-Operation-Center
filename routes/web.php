@@ -35,8 +35,6 @@ Route::middleware(['auth', 'verified','role:user'])->group(function(){
     Route::get('manage_users/add_user/{id}', [UserController::class, 'edit_adduser']);
     Route::post('manage_users/edit_adduser/{id}', [UserController::class, 'update_adduser']) -> name('useradd-update');
 
-    Route::get('/passwordChange', [UserController::class, 'change_pwd'])->name('change-pwd');
-    Route::post('/savePassword', [UserController::class, 'save_pwd'])->name('save_password');
 });
 
 // routes only for authenticated role admin
@@ -94,6 +92,9 @@ Route::middleware(['auth', 'verified'])->group(function(){
 
     Route::delete('manage_users/{id}', [CommonController::class, 'delete_user']);
     Route::delete('manage_users/delete_adduser/{id}', [CommonController::class, 'delete_user']);
+
+    Route::get('/passwordChange', [UserController::class, 'change_pwd'])->name('change-pwd');
+    Route::post('/savePassword', [UserController::class, 'save_pwd'])->name('save_password');
 });
 
     //auth routes

@@ -122,11 +122,10 @@
                             {{ __('App Settings') }}
                         </x-dropdown-link>
                         @endif
-                        @if(Auth::user()->is_dcfocal == 1)
+                        
                         <x-dropdown-link :href="route('change-pwd')">
                             {{ __('Change Password') }}
                         </x-dropdown-link>
-                        @endif
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

@@ -35,7 +35,8 @@
             <select id="organization" class="block mt-1 w-full" name="organization" required autofocus>
                 <option value="">Select an organization</option>
                 @foreach($organizations as $org)
-                <option value="{{ $org->id }}">{{ $org->org_name}} ({{ $org->dc_name}})</option>
+                {{-- <option value="{{ $org->id }}">{{ $org->org_name}} ({{ $org->dc_name}})</option> --}}
+                <option value="{{ $org->id }}">{{ $org->org_name}}</option>
                 @endforeach
             </select>
             <x-input-error :messages="$errors->get('organization')" class="mt-2"   />

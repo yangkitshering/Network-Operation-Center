@@ -47,6 +47,20 @@
                                     autocomplete="org_address" />
                                 <x-input-error :messages="$errors->get('org_address')" class="mt-2" />
                             </div>
+                            <br>
+                            {{-- dc checkbox --}}
+                            <div>
+                                <p>Data Center</p>
+                                <div>
+                                    <input type="checkbox" name="thim" value="1" @if($org->is_thim_dc) checked @endif>
+                                    Thimphu DC &nbsp; &nbsp;
+                                    <input type="checkbox" name="pling" value="1" @if($org->is_pling_dc) checked @endif>
+                                    Pling DC &nbsp; &nbsp;
+                                    <input type="checkbox" name="jakar" value="1" @if($org->is_jakar_dc) checked @endif>
+                                    Jakar DC
+                                </div>
+                            </div>
+    
 
                             <!-- Form inputs here -->
                             <div class="mt-4">

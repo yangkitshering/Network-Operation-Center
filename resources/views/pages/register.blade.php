@@ -109,10 +109,19 @@
                             <x-input-label for="dc" :value="__('Data Center')" />
                             <select id="dc" class="block mt-1 w-full" name="dc" required autofocus>
                                 <option value="" disabled selected>Select a data center</option>
-                                @foreach($dc_lists as $dc)
-                                <!-- Replace $dcList with the variable name containing your data center options -->
-                                <option value="{{ $dc->id }}">{{ $dc->dc_name }}</option>
-                                @endforeach
+                                @if(Auth::user()->is_thim_dc == 1)
+                                <option value="{{ 1 }}">{{ 'Thimphu DC' }}</option>
+                                @endif
+                                @if(Auth::user()->is_pling_dc == 1)
+                                <option value="{{ 2 }}">{{ 'Phuntsholing DC' }}</option>
+                                @endif
+                                @if(Auth::user()->is_jakar_dc == 1)
+                                <option value="{{ 3 }}">{{ 'Jakar DC' }}</option>
+                                @endif
+                                {{-- @foreach($dc_lists as $dc)
+                                <option value="{{ $dc->id }}" {{ $dc->id ==
+                                        Auth::user()->dc_id ? 'selected' : '' }}>{{ $dc->dc_name }}</option>
+                                @endforeach --}}
                             </select>
                             <x-input-error :messages="$errors->get('dc')" class="mt-2" />
                         </div>
@@ -121,20 +130,21 @@
                             <x-input-label for="organization" :value="__('Organization Name')" />
                             <select id="organization" class="block mt-1 w-full" name="organization" required autofocus>
                                 <option value="" disabled selected>Select an organization</option>
-                                @foreach($organizations as $organization)
-                                <option value="{{ $organization->id }}">{{ $organization->org_name}}</option>
+                                @foreach($organizations as $org)
+                                <option value="{{ $org->id }}" {{ $org->id ==
+                                        Auth::user()->organization ? 'selected' : '' }}>{{ $org->org_name}}</option>
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('organization')" class="mt-2"   />
                         </div>
 
                         <div>
-                            <x-input-label for="rack" :value="__('Rack Number')" />
+                            <x-input-label for="rack" :value="__('Rack Name')" />
                             <select id="rack" name="rack" class="mt-1 block w-full" required autofocus
                                 autocomplete="rack">
-                                <option value="">Select your rack number</option>
+                                <option value="">Select your rack</option>
                                 @foreach($rack_lists as $rack)
-                                <option value="{{ $rack->id }}">{{ $rack->rack_no }}</option>
+                                <option value="{{ $rack->id }}">{{ $rack->rack_name }}</option>
                                 @endforeach
                             </select>
                             <x-input-error class="mt-2" :messages="$errors->get('rack')" />

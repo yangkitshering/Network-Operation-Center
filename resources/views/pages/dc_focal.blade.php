@@ -22,7 +22,8 @@
                                 <select id="dc_id" class="block mt-1 w-full" name="dc_id" required autofocus>
                                     <option value="" disabled selected>Select Data Center</option>
                                     @foreach($dc_list as $dc)
-                                    <option value="{{ $dc->id }}">{{ $dc->dc_name}}</option>
+                                    <option value="{{ $dc->id }}" {{ $dc->id ==
+                                        Auth::user()->dc_id ? 'selected' : '' }}>{{ $dc->dc_name}}</option>
                                     @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('organization')" class="mt-2"   />

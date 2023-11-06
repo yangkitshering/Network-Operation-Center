@@ -260,7 +260,7 @@ class CommonController extends Controller
 
     //function to send sms
     public function sendSMS($text, $to){
-        $kannelApiUrl = "http://dev.btcloud.bt:14001/cgi-bin/sendsms";
+        $kannelApiUrl = "http://localhost:14001/cgi-bin/sendsms";
         $user = "tester";
         $pass = "foobar";
         Http::get($kannelApiUrl, [

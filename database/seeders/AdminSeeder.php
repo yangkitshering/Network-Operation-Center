@@ -26,7 +26,8 @@ class AdminSeeder extends Seeder
             'verified' => 1,
             'user_ref_id' => 0,
             'status' => 'A',
-            'is_dcfocal' => 0
+            'is_dcfocal' => 0,
+            'is_thim_dc' => 1,
         ]);
         $admin_thimphu_dc->attachRole('admin');
 
@@ -42,7 +43,8 @@ class AdminSeeder extends Seeder
             'verified' => 1,
             'user_ref_id' => 0,
             'status' => 'A',
-            'is_dcfocal' => 0
+            'is_dcfocal' => 0,
+            'is_pling_dc' => 1
         ]);
         $admin_pling_dc->attachRole('admin');
 
@@ -58,7 +60,8 @@ class AdminSeeder extends Seeder
             'verified' => 1,
             'user_ref_id' => 0,
             'status' => 'A',
-            'is_dcfocal' => 0
+            'is_dcfocal' => 0, 
+            'is_jakar_dc' => 1 
         ]);
         $admin_jakar_dc->attachRole('admin');
     }

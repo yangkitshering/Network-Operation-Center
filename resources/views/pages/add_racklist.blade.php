@@ -24,7 +24,8 @@
                                 <select id="racklist" class="block mt-1 w-full" name="org_id" required autofocus>
                                     <option value="" disabled selected>Select Organization</option>
                                     @foreach($org_list as $org)
-                                    <option value="{{ $org->id }}">{{ $org->org_name}}</option>
+                                    <option value="{{ $org->id }}" {{ $org->id ==
+                                        Auth::user()->organization ? 'selected' : '' }}>{{ $org->org_name}}</option>
                                     @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('racklist')" class="mt-2"  />

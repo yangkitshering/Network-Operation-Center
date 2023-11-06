@@ -12,6 +12,11 @@ class Organization extends Model
         'org_name',
         'org_address',
         'dc_id',
+        'is_thim_dc',
+        'is_pling_dc',
+        'is_jakar_dc',
         
     ];
+    
 }
+

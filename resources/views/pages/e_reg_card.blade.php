@@ -110,15 +110,17 @@
             <td style="width: 80%;">
                 <div class="details">
                     <h2>Visitor Details:</h2>
-                    <p><strong>Name:</strong> {{ $registration->name }}</p>
-                    <p><strong>CID:</strong> {{ $registration->cid }}</p>
+                    <p><strong>Name:</strong> {{ $reg->name }}</p>
+                    <p><strong>CID:</strong> {{ $reg->cid }}</p>
                     <p><strong>Organization:</strong> {{ $org_name }}</p>
-                    <p><strong>Email:</strong> {{ $registration->email }}</p>
-                    <p><strong>Contact:</strong> {{ $registration->contact }}</p>
+                    <p><strong>Rack Name:</strong> {{ $reg->rack_name }}</p>
+                    <p><strong>Rack Description:</strong> {{ $reg->desc }}</p>
+                    <p><strong>Email:</strong> {{ $reg->email }}</p>
+                    <p><strong>Contact:</strong> {{ $reg->contact }}</p>
                     <p><strong>Approxiate Date & Time :</strong></p>
-                    <p><strong>From: </strong> {{ $registration->visitFrom }} &nbsp;<strong>To: </strong> {{
-                        $registration->visitTo }}</p>
-                    <p><strong>Purpose of visit:</strong> {{ $registration->reason }}</p>
+                    <p><strong>From: </strong> {{ $reg->visitFrom }} &nbsp;<strong>To: </strong> {{
+                        $reg->visitTo }}</p>
+                    <p><strong>Purpose of visit:</strong> {{ $reg->reason }}</p>
                     <br>
                     @if(count($additional_user) != 0)
                     <p><strong>Additional Visitors Details:</strong> </p>
@@ -132,37 +134,31 @@
                 </div>
                 <p>Approved By:</p>
                 <p>NOC Manager</p>
-                <br>
                 <hr class="light-hr">
-
                 <p><strong>Focal Person:</strong> </p>
                 <p><strong>Name:</strong> {{ $dc_focal->focal_name }},
                     &nbsp;<strong>Contact:</strong> {{ $dc_focal->focal_contact }}</p>
 
-
-                <p><b>Note*</b><i>Kindly notify the on-duty NOC staff when you exit NOC room. Failure to do so may
-                        result in your
-                        continued presence being assumed in the NOC room, and you may be held accountable for any
-                        misshaps
-                        in the equipment room during this period.</i></p>
             </td>
 
             <td style="width: 0%;">
-
                 <div>
-
                 </div>
             </td>
             <td style="width: 20%;">
-
                 <div class="images-container">
-                    @foreach(explode(',', $registration->passport_path) as $filePath)
+                    @foreach(explode(',', $reg->passport_path) as $filePath)
                     <img src="{{ public_path('/storage/'. trim($filePath)) }}" class="passport-image"
                         alt="Passport Photo">
                     @endforeach
                 </div>
             </td>
         </table>
+        <p><b>Note*</b><i>Kindly notify the on-duty NOC staff when you exit NOC room. Failure to do so may
+                        result in your
+                        continued presence being assumed in the NOC room, and you may be held accountable for any
+                        misshaps
+                        in the equipment room during this period.</i></p>
 
 
 </body>
